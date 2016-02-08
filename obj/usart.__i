@@ -1,0 +1,5 @@
+-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\ST_Libraries\inc -I..\ST_Libraries\src -I..\ST_Libraries\startup -I..\user -I..\obj -I..\project -I..\user_Libraries\inc -I..\user_Libraries\src -IC:\Keil\ARM\RV31\INC -IC:\Keil\ARM\CMSIS\Include -IC:\Keil\ARM\CMSIS 
+-I C:\Keil_v4\ARM\RV31\INC 
+-I C:\Keil_v4\ARM\CMSIS\Include 
+-I C:\Keil_v4\ARM\Inc\ST\STM32F4xx 
+-DUSE_STDPERIPH_DRIVER -o "..\obj\usart.o" --omf_browse "..\obj\usart.crf" --depend "..\obj\usart.d" "..\user_Libraries\src\usart.c"
