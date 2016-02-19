@@ -17,15 +17,15 @@ int turnPwm[4] = {0};
 int turnAngle[4] = {0};
 
 // Motor
-int32_t leftBaseSpeed = 100;
-int32_t rightBaseSpeed  = 100;
+int32_t leftBaseSpeed = 200;
+int32_t rightBaseSpeed  = 200;
 int32_t maxPwm = 300;
 
 // Sensor
 int leftMiddleValue = 600;
 int rightMiddleValue = 600;
-int leftWallThreshold = 300;
-int rightWallThreshold = 300;
+int leftWallThreshold = 200;
+int rightWallThreshold = 200;
 int frontWallThresholdL = 30;
 int frontWallThresholdR = 30;
 bool hasLeftWall = 0;
@@ -79,7 +79,11 @@ void systick(void) {
 			maxPwm = alignPwm;
 			isAligning = 1;
 			isMovingForward = 0;
-			fullCellFlag = 1;
+			
+		}
+		else if (turnProfile){ // slow down when about to turn
+			setLeftPwm(50 - totalError);
+			setRightPwm(50 + totalError);
 		}
 		else {	// Otherwise go at normal speed
 			setLeftPwm(leftBaseSpeed - totalError);
@@ -111,10 +115,10 @@ void systick(void) {
 		// if LF or RF only, error
 		
 		// Random search sets turn profile
-		if (!hasLeftWall)
-			turnProfile = 1;	// Turn left 90
-		else if (!hasRightWall)
+		if (!hasRightWall)
 			turnProfile = 2;	// Turn right 90
+		else if (!hasLeftWall)
+			turnProfile = 1;	// Turn left 90
 		else if (!hasFrontWall)
 			turnProfile = 0;	// Move forward
 		else
@@ -130,8 +134,30 @@ void systick(void) {
 	
 	// Full cell
 	if (getLeftEncCount() + getRightEncCount() >= CELL_DISTANCE*2){
-		fullCellFlag = 1;
 		shortBeep(200, 4000);
+		
+		// Align with front wall
+		if (hasFrontWall) {
+			timeAllotted = alignTime;
+			tempPwm = maxPwm;
+			maxPwm = alignPwm;
+			isAligning = 1;
+			isMovingForward = 0;
+		}
+		
+		// Perform turn
+		else if (turnProfile) {
+			
+			// Reset angle
+			angle = 0;
+			
+			// Perform turn
+			timeAllotted = turnTime[turnProfile];
+			maxPwm = turnPwm[turnProfile];
+			isAligning = 0;
+			isMovingForward = 0;
+			isTurning = 1;
+		}
 		
 		// Reset encoder counts
 		resetLeftEncCount();
@@ -148,14 +174,6 @@ void systick(void) {
 		halfCellFlag = 0;
 		threeQuarterCellFlag = 0;
 		fullCellFlag = 0;
-		
-		// Reset angle
-		angle = 0;
-		
-		// Align mouse before turning
-		if (turnProfile) {
-
-		}
 		
 	}
 	
@@ -205,7 +223,6 @@ void systick(void) {
 			
 			// Revert back to moving forward state
 			angle = 0;
-			maxPwm = tempPwm;
 			isMovingForward = 1;
 		}
 	}
@@ -235,6 +252,8 @@ void button1_interrupt(void) {
 	
 	resetLeftEncCount();
 	resetRightEncCount();
+	
+	angle = 0;
 	
 	delay_ms(1000);
 	isMovingForward = 1;
