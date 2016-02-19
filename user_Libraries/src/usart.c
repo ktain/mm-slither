@@ -89,9 +89,10 @@ void TxUSART(char byte)
 struct __FILE { int handle;};
 FILE __stdout;
 FILE __stdin;
-_sys_exit(int x)  
+int _sys_exit(int x)  
 {  
-x = x;  
+	x = x;  
+	return 0;
 }   
 
 int fputc(int ch, FILE *f) 
@@ -139,7 +140,7 @@ int PutChar (int ch)
 
 char inputChar(void)
 {
-	printf("please enter a charactor...\r\n");
+	printf("please enter a character...\r\n");
 	while (USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET);
 	printf("%c\r\n", USART_ReceiveData(USART1));
 	return USART_ReceiveData(USART1);

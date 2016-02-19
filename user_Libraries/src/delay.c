@@ -55,10 +55,3 @@ void elapseMillis(u32 targetTime, u32 oldt)
 {
 	while((millis()-oldt)<targetTime);
 }
-//NVIC_SetPriority(SysTick_IRQn, n);
-//n=0x00~0x03 设置Systick为抢占优先级0
-//n=0x04~0x07 设置Systick为抢占优先级1
-//n=0x08~0x0B 设置Systick为抢占优先级2
-//n=0x0C~0x0F 设置Systick为抢占优先级3  
-//0x00~0x03高2位为0，所以抢占优先级为0；
-//0x04~0x07高2位为1，所以抢占优先级为1，以此类推。

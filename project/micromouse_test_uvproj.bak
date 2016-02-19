@@ -163,7 +163,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4103</DriverSelection>
+            <DriverSelection>4104</DriverSelection>
           </Flash1>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -334,7 +334,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>0</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -347,7 +347,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>--c99</MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
               <IncludePath>..\ST_Libraries\inc;..\ST_Libraries\src;..\ST_Libraries\startup;..\user;..\obj;..\project;..\user_Libraries\inc;..\user_Libraries\src;C:\Keil\ARM\RV31\INC;C:\Keil\ARM\CMSIS\Include;C:\Keil\ARM\CMSIS</IncludePath>
@@ -633,16 +633,6 @@
               <FilePath>..\user_Libraries\inc\usart.h</FilePath>
             </File>
             <File>
-              <FileName>matrixDisplay.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\user_Libraries\inc\matrixDisplay.h</FilePath>
-            </File>
-            <File>
-              <FileName>SPI.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\user_Libraries\inc\SPI.h</FilePath>
-            </File>
-            <File>
               <FileName>pwm.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\user_Libraries\inc\pwm.h</FilePath>
@@ -672,6 +662,21 @@
               <FileType>5</FileType>
               <FilePath>..\user_Libraries\inc\main.h</FilePath>
             </File>
+            <File>
+              <FileName>global.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\global.h</FilePath>
+            </File>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>test.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\test.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -698,16 +703,6 @@
               <FilePath>..\user_Libraries\src\usart.c</FilePath>
             </File>
             <File>
-              <FileName>matrixDisplay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\user_Libraries\src\matrixDisplay.c</FilePath>
-            </File>
-            <File>
-              <FileName>SPI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\user_Libraries\src\SPI.c</FilePath>
-            </File>
-            <File>
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\pwm.c</FilePath>
@@ -731,6 +726,11 @@
               <FileName>sensor_Function.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\sensor_Function.c</FilePath>
+            </File>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\test.c</FilePath>
             </File>
           </Files>
         </Group>

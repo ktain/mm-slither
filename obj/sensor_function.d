@@ -1,8 +1,10 @@
 ..\obj\sensor_function.o: ..\user_Libraries\src\sensor_Function.c
+..\obj\sensor_function.o: ..\user_Libraries\inc\global.h
+..\obj\sensor_function.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h
+..\obj\sensor_function.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdbool.h
 ..\obj\sensor_function.o: ..\user_Libraries\inc\sensor_Function.h
 ..\obj\sensor_function.o: ..\ST_Libraries\startup\stm32f4xx.h
 ..\obj\sensor_function.o: C:\Keil_v4\ARM\CMSIS\Include\core_cm4.h
-..\obj\sensor_function.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h
 ..\obj\sensor_function.o: C:\Keil_v4\ARM\CMSIS\Include\core_cmInstr.h
 ..\obj\sensor_function.o: C:\Keil_v4\ARM\CMSIS\Include\core_cmFunc.h
 ..\obj\sensor_function.o: C:\Keil_v4\ARM\CMSIS\Include\core_cm4_simd.h
@@ -37,8 +39,8 @@
 ..\obj\sensor_function.o: ..\ST_Libraries\inc\misc.h
 ..\obj\sensor_function.o: ..\user_Libraries\inc\adc.h
 ..\obj\sensor_function.o: ..\user_Libraries\inc\delay.h
-..\obj\sensor_function.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdbool.h
 ..\obj\sensor_function.o: ..\user_Libraries\inc\pwm.h
 ..\obj\sensor_function.o: ..\user_Libraries\inc\led.h
 ..\obj\sensor_function.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h
 ..\obj\sensor_function.o: ..\user_Libraries\inc\encoder.h
+..\obj\sensor_function.o: ..\user_Libraries\inc\buzzer.h

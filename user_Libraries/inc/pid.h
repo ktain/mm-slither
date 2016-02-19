@@ -1,6 +1,7 @@
 #ifndef PID_H
 #define PID_H
 
-v
+void pid(void);
+void resetError(void);
 
 #endif

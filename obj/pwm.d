@@ -1,6 +1,7 @@
 ..\obj\pwm.o: ..\user_Libraries\src\pwm.c
 ..\obj\pwm.o: ..\user_Libraries\inc\pwm.h
 ..\obj\pwm.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h
+..\obj\pwm.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdbool.h
 ..\obj\pwm.o: ..\ST_Libraries\startup\stm32f4xx.h
 ..\obj\pwm.o: C:\Keil_v4\ARM\CMSIS\Include\core_cm4.h
 ..\obj\pwm.o: C:\Keil_v4\ARM\CMSIS\Include\core_cmInstr.h
@@ -35,3 +36,5 @@
 ..\obj\pwm.o: ..\ST_Libraries\inc\stm32f4xx_usart.h
 ..\obj\pwm.o: ..\ST_Libraries\inc\stm32f4xx_wwdg.h
 ..\obj\pwm.o: ..\ST_Libraries\inc\misc.h
+..\obj\pwm.o: ..\user_Libraries\inc\global.h
+..\obj\pwm.o: ..\user_Libraries\inc\config.h

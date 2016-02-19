@@ -1,94 +1,271 @@
-#include "stm32f4xx.h"
-#include "delay.h"
-#include "led.h"
-#include "button.h"
-#include <stdio.h>
-#include "usart.h"
-#include "pwm.h"
-#include "encoder.h"
-#include "buzzer.h"
 #include "main.h"
-#include "sensor_Function.h"
-#include "adc.h"
+
+/* Global variables */
+// PID
+int32_t errorD = 0;
+int32_t errorP = 0;
+int32_t oldErrorP = 0;
+int32_t totalError = 0;
+
+// In-place turning
+int turnProfile = 0;
+int tempPwm;
+int timeAllotted = 0;
+float turnKP[4] = {0};
+int turnTime[4] = {0};
+int turnPwm[4] = {0};
+int turnAngle[4] = {0};
+
+// Motor
+int32_t leftBaseSpeed = 100;
+int32_t rightBaseSpeed  = 100;
+int32_t maxPwm = 300;
+
+// Sensor
+int leftMiddleValue = 600;
+int rightMiddleValue = 600;
+int leftWallThreshold = 300;
+int rightWallThreshold = 300;
+int frontWallThresholdL = 30;
+int frontWallThresholdR = 30;
+bool hasLeftWall = 0;
+bool hasRightWall = 0;
+bool hasFrontWall = 0;
+
+// Systick flags
+bool isMovingForward = 0;
+bool isTurning = 0;
+bool isAligning = 0;
+bool quarterCellFlag = 0;
+bool halfCellFlag = 0;
+bool fullCellFlag = 0;
+bool threeQuarterCellFlag = 0;
+bool stopAtFrontWallFlag = 0;
+
+// Systick events
+int ticker = 0;
+
+// States
+int currentState = 1;
+int lastState = 1;
+
+// Statistics
+int leftSpeed = 0;
+int rightSpeed = 0;
+int prevLeftEncCount = 0;
+int prevRightEncCount = 0;
+
+// Alignment
+int alignLFVal = 1800;
+int alignRFVal = 1500;
+int alignTime = 1000;
+int alignPwm = 50;
 
 void systick(void) {
-		//readGyro();
+	
+	lowBatCheck();	// stall when < 7.00V
+	readGyro();
+
+	
+	// Moving forward state
+	if (isMovingForward) {
+		readSensor();
+		pid();
+		
+		// Move forward
+		if (quarterCellFlag && hasFrontWall) {	// Align when approaching front wall
+			timeAllotted = alignTime;
+			tempPwm = maxPwm;
+			maxPwm = alignPwm;
+			isAligning = 1;
+			isMovingForward = 0;
+			fullCellFlag = 1;
+		}
+		else {	// Otherwise go at normal speed
+			setLeftPwm(leftBaseSpeed - totalError);
+			setRightPwm(rightBaseSpeed + totalError);
+		}
+	}
+	
+		
+	// Quarter cell, run once
+	if(!quarterCellFlag && (getLeftEncCount() + getRightEncCount() > CELL_DISTANCE/2)){
+		quarterCellFlag = 1;
+		
+		// Update position...
+		
+		// Read walls
+		if(LDSensor > leftWallThreshold)
+			hasLeftWall = 1;
+		if(RDSensor > rightWallThreshold)
+			hasRightWall = 1;
+		
+	}
+		
+	// Half cell, run once
+	if(!halfCellFlag && (getLeftEncCount() + getRightEncCount() > CELL_DISTANCE)){
+		halfCellFlag = 1;
+		
+		if ( (LFSensor > frontWallThresholdL) && (RFSensor > frontWallThresholdR) )
+			hasFrontWall = 1;
+		// if LF or RF only, error
+		
+		// Random search sets turn profile
+		if (!hasLeftWall)
+			turnProfile = 1;	// Turn left 90
+		else if (!hasRightWall)
+			turnProfile = 2;	// Turn right 90
+		else if (!hasFrontWall)
+			turnProfile = 0;	// Move forward
+		else
+			turnProfile = 3;
+			
+	}
+		
+	// Three quarter cell, stay on
+	if((getLeftEncCount() + getRightEncCount() > CELL_DISTANCE*1.5)){
+		threeQuarterCellFlag = 1;
+		
+	}
+	
+	// Full cell
+	if (getLeftEncCount() + getRightEncCount() >= CELL_DISTANCE*2){
+		fullCellFlag = 1;
+		shortBeep(200, 4000);
+		
+		// Reset encoder counts
+		resetLeftEncCount();
+		resetRightEncCount();
+		
+		// Reset Error
+		resetError();
+		
+		// Reset Flags
+		hasLeftWall = 0;
+		hasRightWall = 0;
+		hasFrontWall = 0;
+		quarterCellFlag = 0;
+		halfCellFlag = 0;
+		threeQuarterCellFlag = 0;
+		fullCellFlag = 0;
+		
+		// Reset angle
+		angle = 0;
+		
+		// Align mouse before turning
+		if (turnProfile) {
+
+		}
+		
+	}
+	
+	// Alignment
+	else if (isAligning) {
+		readSensor();
+		if (timeAllotted > 0) {
+			timeAllotted--;
+			alignFrontWall();
+		}	
+		else {
+			// Perform turn
+			timeAllotted = turnTime[turnProfile];
+			maxPwm = turnPwm[turnProfile];
+			isAligning = 0;
+			isMovingForward = 0;
+			isTurning = 1;
+		}
+	}
+	
+	// Turning state
+	else if (isTurning) {		// Finish turn
+		
+		if (timeAllotted > 0) {
+			timeAllotted--;
+			turn(turnProfile);
+		}	
+		else {	
+
+			// Reset encoder count
+			resetLeftEncCount();
+			resetRightEncCount();
+			
+			// Reset error
+			resetError();
+			
+			// Reset Flags
+			hasLeftWall = 0;
+			hasRightWall = 0;
+			hasFrontWall = 0;
+			quarterCellFlag = 0;
+			halfCellFlag = 0;
+			threeQuarterCellFlag = 0;
+			fullCellFlag = 0;
+			isTurning = 0;
+			turnProfile = 0;
+			
+			// Revert back to moving forward state
+			angle = 0;
+			maxPwm = tempPwm;
+			isMovingForward = 1;
+		}
+	}
+	
 }
+
+
 
 void button0_interrupt(void) {
 	shortBeep(200, 300);
 	delay_ms(1000);
+	
+	angle = 0;
 	while(1) {
 		readSensor();
 		ledTest();					// No delay
 		printInfo();				// No delay
-		delay_ms(50);
+		delay_ms(10);
 	}
 }
 
+
+
 void button1_interrupt(void) {
 	shortBeep(200, 400);
+	delay_ms(1000);	
+	
+	resetLeftEncCount();
+	resetRightEncCount();
+	
 	delay_ms(1000);
-	while(1) {
-		frontWallTest(2000);	// has 1ms delay
-	}
+	isMovingForward = 1;
 }
+
+
 
 void button2_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
-	while(1) {
-		frontWallTest(500);	// has 1ms delay
-	}
+
 }
+
+
 
 void button3_interrupt(void) {
 	shortBeep(200, 600);
 	delay_ms(1000);
-	setLeftPwm(50);
-	setRightPwm(-50);
+
 }
+
 
 
 void printInfo(void) {
-	
-	printf("LEM_F %4d | LEM_D %4d |REM_F %4d | REM_D %4d | LENC %9d | RENC %9d | aSpeed %8d | angle %8d | voltage %4d | Outz %4d | Vref %4d\r\n",
-					LFSensor, DLSensor, RFSensor, DRSensor, getLeftEncCount(), getRightEncCount(), aSpeed, angle, voltage, read_Outz, read_Vref);
+	printf("LF %4d|LD %4d|LS %4d|RS %4d|RD %4d|RF %4d|LENC %9d|RENC %9d|voltage %4d|angle %4d|currentState %d|leftSpeed %d\r\n",
+					LFSensor, LDSensor, LSSensor, RSSensor, RDSensor, RFSensor, getLeftEncCount(), getRightEncCount(), voltage, angle, currentState, leftSpeed);
 }
 
-void frontWallTest(int ref) {
-	int curt = micros(); //start to track time in order to make one adjust every 1000us
-	readSensor();
-	setLeftPwm(ref - LFSensor);
-	setRightPwm(ref - RFSensor);
-	elapseMicros(1000, curt);//elapse 1000 micro seconds
-}
-
-void ledTest (void) {
-	if (LFSensor > 10)
-		LED2_ON;
-	else
-		LED2_OFF;
-	
-	if (DLSensor > 10)
-		LED1_ON;
-	else
-		LED1_OFF;
-	
-	if (DRSensor > 10)
-		LED4_ON;
-	else
-		LED4_OFF;
-	
-	if (RFSensor > 10)
-		LED3_ON;
-	else
-		LED3_OFF;
-}
 
 int main(void) {
 	
-
 	Systick_Configuration();
 	LED_Configuration();
 	button_Configuration();
@@ -100,19 +277,31 @@ int main(void) {
 
 	ALL_LED_OFF;
 	ALL_EM_OFF;
+	
 	delay_ms(1000);
 	shortBeep(200, 400);	// ms, frequency
 	
-
+	// Turn left 90
+	turnKP[1] = 0.025;
+  turnTime[1] = 500;
+  turnPwm[1] = 200;
+  turnAngle[1] = -8600;	// left turn is negative
 	
-	while(1) {
-		//lowBatCheck();
-		//setLeftPwm(50);
-		//setRightPwm(50);
-		readGyro();
-		printf("Angle %d\r\n", angle);
-		//delay_ms(1);
+	// Turn right 90
+	turnKP[2] = 0.025;
+  turnTime[2] = 500;
+  turnPwm[2] = 200;
+  turnAngle[2] = 9000;	// right turn is positive 
+
+	// Turn back 180
+	turnKP[3] = 0.015;
+  turnTime[3] = 1000;
+  turnPwm[3] = 200;
+  turnAngle[3] = -18700; // left turn is more reliable
+	
+	
+	while(1) {		
+		printInfo();
+		delay_ms(100);
 	}
 }
-
-

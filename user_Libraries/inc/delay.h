@@ -1,6 +1,7 @@
 #ifndef DELAY_H
 #define DELAY_H   
 #include "stdbool.h" //for bool
+#include "stm32f4xx.h"
 
 void Systick_Configuration(void);//initialize systick
 void delay_ms(u32 nTime);

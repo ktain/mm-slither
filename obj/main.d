@@ -1,4 +1,5 @@
 ..\obj\main.o: ..\user\main.c
+..\obj\main.o: ..\user_Libraries\inc\main.h
 ..\obj\main.o: ..\ST_Libraries\startup\stm32f4xx.h
 ..\obj\main.o: C:\Keil_v4\ARM\CMSIS\Include\core_cm4.h
 ..\obj\main.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h
@@ -43,6 +44,11 @@
 ..\obj\main.o: ..\user_Libraries\inc\pwm.h
 ..\obj\main.o: ..\user_Libraries\inc\encoder.h
 ..\obj\main.o: ..\user_Libraries\inc\buzzer.h
-..\obj\main.o: ..\user_Libraries\inc\main.h
 ..\obj\main.o: ..\user_Libraries\inc\sensor_Function.h
 ..\obj\main.o: ..\user_Libraries\inc\adc.h
+..\obj\main.o: ..\user_Libraries\inc\test.h
+..\obj\main.o: ..\user_Libraries\inc\config.h
+..\obj\main.o: ..\user_Libraries\inc\global.h
+..\obj\main.o: ..\user_Libraries\inc\pid.h
+..\obj\main.o: ..\user_Libraries\inc\turn.h
+..\obj\main.o: ..\user_Libraries\inc\align.h

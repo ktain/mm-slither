@@ -39,3 +39,17 @@
 ..\obj\stm32f4xx_it.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdbool.h
 ..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\buzzer.h
 ..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\main.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\led.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\button.h
+..\obj\stm32f4xx_it.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\usart.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\pwm.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\encoder.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\sensor_Function.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\adc.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\test.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\config.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\global.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\pid.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\turn.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\align.h

@@ -1,5 +1,7 @@
 #include "pwm.h"
 #include "stm32f4xx.h"
+#include "global.h"
+#include "config.h"
 
 //TIM4 CH1 (PB6), TIM4 CH2 (PB7), TIM4 CH3 (PB8) and TIM4 CH4 (PB9)
 u16 CCR1_Val = 0; //set initial PWM as 0
@@ -118,10 +120,10 @@ void TIM4_PWM_Init(void)
 //you set for TIM_TimeBaseStructure.TIM_Period (which is register TIM4->ARR)
 void setLeftPwm(int32_t speed)
 {
-	if(speed > MAX_PWM)//parameter check
-		speed = MAX_PWM;
-	if(speed < -MAX_PWM)
-		speed = -MAX_PWM;
+	if(speed > maxPwm)//parameter check
+		speed = maxPwm;
+	if(speed < -maxPwm)
+		speed = -maxPwm;
 
     if(speed >= 0)//forward
     {
@@ -137,10 +139,10 @@ void setLeftPwm(int32_t speed)
 
 void setRightPwm(int32_t speed)
 {
-	if(speed > MAX_PWM)
-		speed = MAX_PWM;
-	if(speed < -MAX_PWM)
-		speed = -MAX_PWM;	
+	if(speed > maxPwm)
+		speed = maxPwm;
+	if(speed < -maxPwm)
+		speed = -maxPwm;	
 	
     if(speed >= 0)//forward
     {

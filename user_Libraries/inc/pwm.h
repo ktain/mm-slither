@@ -2,6 +2,7 @@
 #define PWM_H   
 //#include "stm32f10x_lib.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 void TIM4_GPIO_Config(void);
 void TIM4_Mode_Config(void);
@@ -16,6 +17,5 @@ void setLeftPwm(int32_t speed);
 #define R_PWM_R TIM4->CCR4
 
 #define turnMotorOff     setLeftPwm(0);setRightPwm(0)
-#define MAX_PWM 100		// 0 to 999
 
 #endif
