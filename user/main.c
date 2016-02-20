@@ -17,15 +17,16 @@ int turnPwm[4] = {0};
 int turnAngle[4] = {0};
 
 // Motor
-int32_t leftBaseSpeed = 200;
-int32_t rightBaseSpeed  = 200;
+int32_t leftBaseSpeed = 100;
+int32_t rightBaseSpeed  = 100;
 int32_t maxPwm = 300;
+int32_t forwardPwm = 100;
 
 // Sensor
 int leftMiddleValue = 600;
 int rightMiddleValue = 600;
-int leftWallThreshold = 200;
-int rightWallThreshold = 200;
+int leftWallThreshold = 300;
+int rightWallThreshold = 300;
 int frontWallThresholdL = 30;
 int frontWallThresholdR = 30;
 bool hasLeftWall = 0;
@@ -56,9 +57,9 @@ int prevLeftEncCount = 0;
 int prevRightEncCount = 0;
 
 // Alignment
-int alignLFVal = 1800;
+int alignLFVal = 1500;
 int alignRFVal = 1500;
-int alignTime = 1000;
+int alignTime = 800;
 int alignPwm = 50;
 
 void systick(void) {
@@ -72,10 +73,11 @@ void systick(void) {
 		readSensor();
 		pid();
 		
+		maxPwm = forwardPwm;
+		
 		// Move forward
 		if (quarterCellFlag && hasFrontWall) {	// Align when approaching front wall
 			timeAllotted = alignTime;
-			tempPwm = maxPwm;
 			maxPwm = alignPwm;
 			isAligning = 1;
 			isMovingForward = 0;
@@ -202,7 +204,6 @@ void systick(void) {
 			turn(turnProfile);
 		}	
 		else {	
-
 			// Reset encoder count
 			resetLeftEncCount();
 			resetRightEncCount();
@@ -301,22 +302,22 @@ int main(void) {
 	shortBeep(200, 400);	// ms, frequency
 	
 	// Turn left 90
-	turnKP[1] = 0.025;
+	turnKP[1] = 0.1;
   turnTime[1] = 500;
   turnPwm[1] = 200;
-  turnAngle[1] = -8600;	// left turn is negative
+  turnAngle[1] = -9200;	// left turn is negative
 	
 	// Turn right 90
-	turnKP[2] = 0.025;
+	turnKP[2] = 0.1;
   turnTime[2] = 500;
   turnPwm[2] = 200;
-  turnAngle[2] = 9000;	// right turn is positive 
+  turnAngle[2] = 9400;	// right turn is positive 
 
 	// Turn back 180
-	turnKP[3] = 0.015;
+	turnKP[3] = 0.1;
   turnTime[3] = 1000;
   turnPwm[3] = 200;
-  turnAngle[3] = -18700; // left turn is more reliable
+  turnAngle[3] = -19000; // left turn is more reliable
 	
 	
 	while(1) {		

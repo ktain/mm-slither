@@ -149,7 +149,7 @@ void readGyro(void)
 void readVolMeter(void)
 {
 	volMeter = read_Vol_Meter;//raw value 2611 == 7.00V
-	voltage = volMeter/3.105; //actual voltage value 7.00V == 700
+	voltage = volMeter/.3105; //actual voltage value 7.00V == 7000
 	// 10K || 30K
 	// 1.75V == 7V == 0x0000087E
 }
@@ -159,7 +159,7 @@ void lowBatCheck(void)
 	readVolMeter();
 	
 	// Low battery threshold of 7.00V
-  if(voltage < 700)
+  if(voltage < 7000)
 	{	
 		
 		// Stop motors

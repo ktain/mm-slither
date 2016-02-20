@@ -10,6 +10,7 @@
 extern int32_t leftBaseSpeed;
 extern int32_t rightBaseSpeed;
 extern int32_t maxPwm;
+extern int32_t forwardPwm;
 
 // PID
 extern int32_t errorD;

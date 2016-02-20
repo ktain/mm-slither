@@ -677,6 +677,16 @@
               <FileType>5</FileType>
               <FilePath>..\user_Libraries\inc\test.h</FilePath>
             </File>
+            <File>
+              <FileName>pid.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\pid.h</FilePath>
+            </File>
+            <File>
+              <FileName>turn.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\turn.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -731,6 +741,16 @@
               <FileName>test.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\test.c</FilePath>
+            </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>turn.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\turn.c</FilePath>
             </File>
           </Files>
         </Group>

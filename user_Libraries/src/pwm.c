@@ -120,6 +120,14 @@ void TIM4_PWM_Init(void)
 //you set for TIM_TimeBaseStructure.TIM_Period (which is register TIM4->ARR)
 void setLeftPwm(int32_t speed)
 {
+	// scale pwm based on current voltage
+	// minVoltage = 7000
+	// pwmScaler = 12
+	if (speed >  0)
+		speed = speed - (voltage - 7000)*12*speed/100000;
+	if (speed < 0)
+		speed = speed + (voltage - 7000)*12*speed/100000;
+	
 	if(speed > maxPwm)//parameter check
 		speed = maxPwm;
 	if(speed < -maxPwm)
@@ -139,6 +147,14 @@ void setLeftPwm(int32_t speed)
 
 void setRightPwm(int32_t speed)
 {
+	// scale pwm based on current voltage
+	// minVoltage = 7000
+	// pwmScaler = 12
+	if (speed >  0)
+		speed = speed - (voltage - 7000)*12*speed/100000;
+	if (speed < 0)
+		speed = speed + (voltage - 7000)*12*speed/100000;
+	
 	if(speed > maxPwm)
 		speed = maxPwm;
 	if(speed < -maxPwm)
