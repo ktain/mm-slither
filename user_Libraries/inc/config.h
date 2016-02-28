@@ -1,16 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// Encoder constants
-#define ENC_RESOLUTION 64 // Counts per revolution IE2-16 in X4 mode
+// Constants
 
-// PID constants
-#define KP 0.1			// higher = stronger turn
-#define KD 2			// higher = faster vibration
-
-// Maze constants
-#define CELL_DISTANCE (12.1 * ENC_RESOLUTION) // 12.5motorrev/cell
-
-
+// Pivot turn
+#define TURNLEFT90		-89.9
+#define TURNRIGHT90		90.5
+#define TURNLEFT180		-180
+#define TURNRIGHT180	180
 
 #endif

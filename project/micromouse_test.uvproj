@@ -692,6 +692,11 @@
               <FileType>5</FileType>
               <FilePath>..\user_Libraries\inc\align.h</FilePath>
             </File>
+            <File>
+              <FileName>speedProfile.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\speedProfile.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -761,6 +766,11 @@
               <FileName>align.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\align.c</FilePath>
+            </File>
+            <File>
+              <FileName>speedProfile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\speedProfile.c</FilePath>
             </File>
           </Files>
         </Group>

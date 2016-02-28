@@ -52,3 +52,4 @@
 ..\obj\main.o: ..\user_Libraries\inc\pid.h
 ..\obj\main.o: ..\user_Libraries\inc\turn.h
 ..\obj\main.o: ..\user_Libraries\inc\align.h
+..\obj\main.o: ..\user_Libraries\inc\speedProfile.h

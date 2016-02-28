@@ -46,12 +46,7 @@ void ADC_Config(void)
 	/* Enable ADC1 */
 	ADC_Cmd(ADC1, ENABLE);
 	
-	LEM_F_OFF;
-	LEM_D_OFF;
-	LEM_S_OFF;
-	REM_S_OFF;    
-  REM_D_OFF;
-	REM_F_OFF;
+	ALL_EM_OFF;
 }
 
 

@@ -4,7 +4,7 @@
 #include <stm32f4xx.h>
 
 void readSensor(void);
-void readDiagSensors(void);
+void readSideSensors(void);
 void readGyro(void);
 void readVolMeter(void);
 void lowBatCheck(void);

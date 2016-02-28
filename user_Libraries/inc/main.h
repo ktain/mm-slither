@@ -18,6 +18,7 @@
 #include "pid.h"
 #include "turn.h"
 #include "align.h"
+#include "speedProfile.h"
 
 void systick(void);
 void button0_interrupt(void);

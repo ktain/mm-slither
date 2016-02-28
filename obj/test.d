@@ -42,3 +42,5 @@
 ..\obj\test.o: ..\user_Libraries\inc\led.h
 ..\obj\test.o: ..\user_Libraries\inc\encoder.h
 ..\obj\test.o: ..\user_Libraries\inc\global.h
+..\obj\test.o: ..\user_Libraries\inc\speedProfile.h
+..\obj\test.o: ..\user_Libraries\inc\config.h

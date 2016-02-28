@@ -7,22 +7,19 @@
 #include "led.h"
 #include "encoder.h"
 #include "global.h"
+#include "speedProfile.h"
+#include "config.h"
 
-void hugFrontWall(int sensorVal) {
-	int curt = micros(); //start to track time in order to make one adjust every 1000us
-	readSensor();
-	setLeftPwm(sensorVal - LFSensor);
-	setRightPwm(sensorVal - RFSensor);
-	elapseMicros(1000, curt); //elapse 1000 micro seconds
-}
-
-void stopAtFrontWall(int sensorVal) {
-	if ((LFSensor < sensorVal) && (RFSensor < sensorVal)) {
-		setLeftPwm(leftBaseSpeed - totalError);
-		setRightPwm(rightBaseSpeed + totalError); 
-	}
-	else {
-		turnMotorOff;
+/**
+ *	Hug Front Wall
+ */
+void hugFrontWall(int LSensorVal, int RSensorVal) {
+	while (1) {
+		int curt = micros(); //start to track time in order to make one adjust every 1000us
+		readSensor();
+		setLeftPwm(LSensorVal - LFSensor);
+		setRightPwm(RSensorVal - RFSensor);
+		elapseMicros(1000, curt); //elapse 1000 micro seconds
 	}
 }
 
@@ -58,11 +55,13 @@ int wheelOffsetTest(int speed, int ontime) {
 	resetLeftEncCount();
 	resetRightEncCount();
 
-	setRightPwm(speed);    
 	setLeftPwm(speed);
+	setRightPwm(speed);    
 	delay_ms(ontime);
 	turnMotorOff; 
 	delay_ms(100);
 	
 	return getRightEncCount() - getLeftEncCount();
 }
+
+

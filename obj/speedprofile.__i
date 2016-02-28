@@ -2,4 +2,4 @@
 -I C:\Keil_v4\ARM\RV31\INC 
 -I C:\Keil_v4\ARM\CMSIS\Include 
 -I C:\Keil_v4\ARM\Inc\ST\STM32F4xx 
--DUSE_STDPERIPH_DRIVER -o "..\obj\pwm.o" --omf_browse "..\obj\pwm.crf" --depend "..\obj\pwm.d" "..\user_Libraries\src\pwm.c"
+-DUSE_STDPERIPH_DRIVER -o "..\obj\speedprofile.o" --omf_browse "..\obj\speedprofile.crf" --depend "..\obj\speedprofile.d" "..\user_Libraries\src\speedProfile.c"

@@ -687,6 +687,11 @@
               <FileType>5</FileType>
               <FilePath>..\user_Libraries\inc\turn.h</FilePath>
             </File>
+            <File>
+              <FileName>align.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\align.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -751,6 +756,11 @@
               <FileName>turn.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\turn.c</FilePath>
+            </File>
+            <File>
+              <FileName>align.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\align.c</FilePath>
             </File>
           </Files>
         </Group>

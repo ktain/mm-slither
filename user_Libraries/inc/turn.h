@@ -2,6 +2,6 @@
 #define TURN_H
 
 
-void turn(int turnProfile);
+void pivotTurn(float degrees);
 
 #endif

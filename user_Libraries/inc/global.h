@@ -6,11 +6,71 @@
 
 /* Global variables */
 
+// Mechanical settings
+extern int encResolution;
+extern int gearRatio;
+extern float wheelCircumference;
+extern float wheelBase;
+extern int cellDistance;
+
+// Speed settings
+extern int leftBaseSpeed;
+extern int rightBaseSpeed;
+extern int maxPwm;
+
+// Speed profile options
+extern bool useIRSensors;
+extern bool useGyro;
+extern bool usePID;
+extern bool useSpeedProfile;
+extern bool useOnlyGyroFeedback;
+extern bool useOnlyEncoderFeedback;
+
 // Speed profile
-extern int32_t leftBaseSpeed;
-extern int32_t rightBaseSpeed;
-extern int32_t maxPwm;
-extern int32_t forwardPwm;
+extern float curSpeedX;
+extern float curSpeedW;
+extern int targetSpeedX;
+extern int targetSpeedW;
+extern int encoderFeedbackX;
+extern int encoderFeedbackW;
+extern float pidInputX;
+extern float pidInputW;
+extern float posErrorX;
+extern float posErrorW;
+extern float oldPosErrorX;
+extern float oldPosErrorW;
+extern int posPwmX;
+extern int posPwmW;
+extern float kpX, kdX;
+extern float kpW, kdW;	//used in straight
+extern float kpW1;			//used for T1 and T3 in curve turn
+extern float kdW1;
+extern float kpW2;			//used for T2 in curve turn
+extern float kdW2;
+extern float accX;			//6m/s/s  
+extern float decX; 
+extern float accW; 		//cm/s^2
+extern float decW;
+extern int moveSpeed;			//speed is in cm/s
+extern int maxSpeed;			//call speed_to_counts(maxSpeed);
+extern int turnSpeed;
+
+extern int leftEncCount;
+extern int rightEncCount;
+extern int leftEncOld;
+extern int rightEncOld;
+extern int leftEncChange;
+extern int rightEncChange;
+extern int encChange;
+extern int distanceLeft;
+extern int sensorError;
+extern int encCount;
+extern int oldEncCount;
+
+extern int LFvalue1;
+extern int RFvalue1;
+extern int LFvalue2;
+extern int RFvalue2;
 
 // PID
 extern int32_t errorD;
@@ -18,29 +78,16 @@ extern int32_t errorP;
 extern int32_t oldErrorP;
 extern int32_t totalError;
 
-// In-place turning
-extern int turnProfile;
-extern int tempPwm;
-extern int timeAllotted;
-extern float turnKP[4];
-extern int turnTime[4];
-extern int turnPwm[4];
-extern int turnAngle[4];
-
 // Sensor
-extern int leftMiddleValue;
-extern int rightMiddleValue;
+extern int LDMiddleValue;
+extern int RDMiddleValue;
 extern int leftWallThreshold;
 extern int rightWallThreshold;
 extern int frontWallThresholdL;
 extern int frontWallThresholdR;
 
-extern bool hasLeftWall;
-extern bool hasRightWall;
-extern bool hasFrontWall;
-
 // Gyro
-extern int reflectionRate; // which is 1.000 (converted to ingeter)
+extern int reflectionRate;
 extern int32_t volMeter;
 extern int32_t voltage;
 extern int32_t LFSensor;
@@ -50,38 +97,7 @@ extern int32_t RDSensor;
 extern int32_t LSSensor;
 extern int32_t RSSensor;
 extern int32_t Outz;
-extern int32_t aSpeed; //angular velocity
+extern int32_t aSpeed;
 extern int32_t angle; 
-
-// Systick flags
-extern bool isMovingForward;
-extern bool isTurning;
-extern bool isAligning;
-extern bool quarterCellFlag;
-extern bool halfCellFlag;
-extern bool fullCellFlag;
-extern bool threeQuarterCellFlag;
-extern bool stopAtFrontWallFlag;
-
-// Systick events
-extern int ticker;
-
-// Current state
-extern int currentState;
-
-// Last state
-extern int lastState;
-
-// Statistics
-extern int leftSpeed;
-extern int rightSpeed;
-extern int prevLeftEncCount;
-extern int prevRightEncCount;
-
-// Alignment
-extern int alignLFVal;
-extern int alignRFVal;
-extern int alignTime;
-extern int alignPwm;
 
 #endif

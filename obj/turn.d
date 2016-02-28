@@ -40,3 +40,4 @@
 ..\obj\turn.o: ..\ST_Libraries\inc\stm32f4xx_wwdg.h
 ..\obj\turn.o: ..\ST_Libraries\inc\misc.h
 ..\obj\turn.o: ..\user_Libraries\inc\encoder.h
+..\obj\turn.o: ..\user_Libraries\inc\speedProfile.h
