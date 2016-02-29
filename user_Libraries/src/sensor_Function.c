@@ -28,7 +28,6 @@ int32_t angle = 0;
 void readSensor(void)
 {
 	u32 curt;
-	//read DC value		
 	
 	LFSensor = read_LF_Sensor;	
 	RFSensor = read_RF_Sensor;	
@@ -39,7 +38,7 @@ void readSensor(void)
 	
 	curt = micros();
 	
-	// Read left and right front sensor
+	// Read left and right front sensors
 	LEM_F_ON;
 	REM_F_ON;
 	elapseMicros(60,curt);	// default 60

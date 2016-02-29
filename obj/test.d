@@ -44,3 +44,5 @@
 ..\obj\test.o: ..\user_Libraries\inc\global.h
 ..\obj\test.o: ..\user_Libraries\inc\speedProfile.h
 ..\obj\test.o: ..\user_Libraries\inc\config.h
+..\obj\test.o: ..\user_Libraries\inc\turn.h
+..\obj\test.o: ..\user_Libraries\inc\buzzer.h

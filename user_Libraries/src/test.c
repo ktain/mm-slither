@@ -9,6 +9,9 @@
 #include "global.h"
 #include "speedProfile.h"
 #include "config.h"
+#include "turn.h"
+#include "buzzer.h"
+
 
 /**
  *	Hug Front Wall
@@ -64,4 +67,99 @@ int wheelOffsetTest(int speed, int ontime) {
 	return getRightEncCount() - getLeftEncCount();
 }
 
+
+
+/*
+ * Random search using pivot turns
+ */
+void randomSearch(void) {
+	resetSpeedProfile();
+	useIRSensors = 1;
+	useGyro = 0;
+	useSpeedProfile = 1;
+	isWaiting = 0;
+	isSearching = 1;
+	isSpeedRunning = 0;
+	
+	int cellCount = 1;						// number of explored cells
+	int turnCount = 0;
+	int remainingDist = 0;				// positional distance
+	bool halfCellFlag = 0;
+	bool fullCellFlag = 0;
+	bool hasFrontWall = 0;
+	bool hasLeftWall = 0;
+	bool hasRightWall = 0;
+	int nextMove = 0;
+	
+	while(1) {	// run forever
+		targetSpeedX = searchSpeed;
+		remainingDist = cellCount*cellDistance - encCount;
+		// Add check for front wall to turn off diag sensors briefly
+		
+		// Reached half cell
+		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
+			halfCellFlag = 1;
+			// Read wall and set wall flags
+			if ((LFSensor > frontWallThresholdL) && (RFSensor > frontWallThresholdR))
+				hasFrontWall = 1;
+			if (LDSensor > leftWallThreshold)
+				hasLeftWall = 1;
+			if (RDSensor > rightWallThreshold)
+				hasRightWall = 1;
+			
+			// Store destination cell's wall data
+			
+			// Get next movement (search algorithm)
+			if (!hasFrontWall)
+				nextMove = GOFORWARD;
+			else if (!hasLeftWall)
+				nextMove = TURNLEFT;
+			else if (!hasRightWall)
+				nextMove = TURNRIGHT;
+			else
+				nextMove = TURNBACK;
+		}
+		
+		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
+		if (hasFrontWall || nextMove == TURNLEFT || nextMove == TURNRIGHT || nextMove == TURNBACK) {
+			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+				targetSpeedX = searchSpeed;
+			else
+				targetSpeedX = stopSpeed;
+		}
+		
+		// Reached full cell
+		if (!fullCellFlag && (remainingDist <= 0)) {
+			fullCellFlag = 1;
+			cellCount++;
+			shortBeep(200, 1000);
+			
+			// If has front wall, align with front wall
+			
+			// Reached full cell, perform next move
+			if (nextMove == TURNLEFT) {
+				pivotTurn(TURNLEFT90);
+				turnCount++;
+			}
+			else if (nextMove == TURNRIGHT) {
+				pivotTurn(TURNRIGHT90);
+				turnCount++;
+			}
+			else if (nextMove == TURNBACK) {
+				pivotTurn(TURNLEFT90);
+				turnCount++;
+			}
+			else if (nextMove == GOFORWARD) {
+				// Continue moving forward
+			}
+			
+			halfCellFlag = 0;
+			fullCellFlag = 0;
+			hasFrontWall = 0;
+			hasLeftWall = 0;
+			hasRightWall = 0;
+		}
+	}
+	
+}
 

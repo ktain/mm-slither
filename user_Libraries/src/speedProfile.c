@@ -24,15 +24,17 @@ float oldPosErrorX = 0;
 float oldPosErrorW = 0;
 int posPwmX = 0;
 int posPwmW = 0;
-float kpX = 2, kdX = 4;
-float kpW = 1, kdW = 12;	//used in straight
+float kpX = 2;
+float kdX = 4;
+float kpW = 1;
+float kdW = 12;						//used in straight
 float kpW1 = 1;						//used for T1 and T3 in curve turn
 float kdW1 = 26;
 float kpW2 = 1;						//used for T2 in curve turn
 float kdW2 = 36;
 float accX = 20;					// acc/dec in cm/s/s
 float decX = 300; 				// default 600 = 6m/s/s  
-float accW = 1; 					//cm/s^2
+float accW = 1; 					// cm/s^2
 float decW = 1;	
 
 int leftBaseSpeed = 0;
@@ -48,6 +50,7 @@ int32_t distanceLeft = 0;
 int32_t encCount = 0;
 int32_t oldEncCount = 0;
 int sensorError = 0;
+int sensorScale = 20;
 
 int gyroFeedbackRatio = 5700;
 
@@ -134,6 +137,12 @@ void calculateMotorPwm(void) { // encoder PD controller
 	posErrorX += curSpeedX - encoderFeedbackX;
 	posErrorW += curSpeedW - rotationalFeedback;
 	
+	if (useIRSensors) {
+		getSensorError();
+		sensorFeedback = sensorError/sensorScale;
+		posErrorW += sensorFeedback;
+	}
+	
 	posPwmX = kpX * posErrorX + kdX * (posErrorX - oldPosErrorX);
 	posPwmW = kpW * posErrorW + kdW * (posErrorW - oldPosErrorW);
 	
@@ -142,12 +151,6 @@ void calculateMotorPwm(void) { // encoder PD controller
 	
 	leftBaseSpeed = posPwmX - posPwmW;
 	rightBaseSpeed = posPwmX + posPwmW;
-	
-	if (useIRSensors) {
-		getSensorError();
-		leftBaseSpeed += sensorError;
-		rightBaseSpeed -= sensorError;
-	}
 
 	setLeftPwm(leftBaseSpeed);
 	setRightPwm(rightBaseSpeed);	
@@ -248,7 +251,7 @@ float abs (float number) {
  *	Straight movement
  */
 void moveForward(int cells) {
-	useIRSensors = 0;
+	useIRSensors = 1;
 	useGyro = 0;
 	usePID = 1;
 	
@@ -267,13 +270,13 @@ void moveForward(int cells) {
 }
 
 
-void getSensorError(void)//the very basic case
+void getSensorError(void)
 {
 	if(LDSensor > LDMiddleValue && RDSensor < RDMiddleValue)
 		sensorError = LDMiddleValue - LDSensor;
 	else if(RDSensor > RDMiddleValue && LDSensor < LDMiddleValue)
 		sensorError = RDSensor - RDMiddleValue;
-	else
+	else	
 		sensorError = 0;
 }
 

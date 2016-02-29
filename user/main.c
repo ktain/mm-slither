@@ -13,18 +13,26 @@ int cellDistance = 12800;				// 12.5 * encResolution
 
 
 /* Configure speed profile options */
-bool useIRSensors = 1;
+bool useIRSensors = 0;
 bool useGyro = 0;
-bool usePID = 1;
-bool useSpeedProfile = 1;
+bool usePID = 0;
+bool useSpeedProfile = 0;
 bool useOnlyGyroFeedback = 0;
 bool useOnlyEncoderFeedback = 0;
 int moveSpeed = 0*2;			// speed is in cm/s, double of actual speed
-int maxSpeed = 30*2;			// call speed_to_counts(maxSpeed)
+int maxSpeed = 50*2;			// call speed_to_counts(maxSpeed)
 int turnSpeed = 10*2;		
+int searchSpeed = 10*2;
+int stopSpeed = 0*2;
 
+// Mouse state
+bool isWaiting = 0;
+bool isSearching = 0;
+bool isSpeedRunning = 0;
+
+// Sensor Thresholds
 int frontWallThresholdL = 30;
-int frontWallThresholdR = 0;
+int frontWallThresholdR = 30;
 int leftWallThreshold = 300;
 int rightWallThreshold = 300;
 int LDMiddleValue = 650;
@@ -41,19 +49,21 @@ int RFvalue2 = 500;
 void systick(void) {
 	
 	// If not moving, check voltage
-	if (curSpeedX == 0 && curSpeedW == 0)
+	if (isWaiting)
 		lowBatCheck();	// stall if < 7.00V
 	
-	// Collect data
-	if(useIRSensors)
-		readSensor();
-	
-	if(useGyro)
-		readGyro();
-	
-	// Run speed profile (with PID)
-	if(useSpeedProfile) {
-		speedProfile();
+	else if (isSearching) {
+		// Collect data
+		if(useIRSensors)
+			readSensor();
+		
+		if(useGyro)
+			readGyro();
+		
+		// Run speed profile (with PID)
+		if(useSpeedProfile) {
+			speedProfile();
+		}
 	}
 	
 }
@@ -74,10 +84,11 @@ int main(void) {
 	ALL_LED_OFF;
 
 	delay_ms(1000);
-	shortBeep(200, 500);	// ms, frequency
+	shortBeep(200, 1000);	// ms, frequency
+	
+	isWaiting = 1;
 	
 	while(1) {		
-		printInfo();
 		delay_ms(10);
 	}
 }
@@ -101,6 +112,10 @@ void button0_interrupt(void) {
 void button1_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);	
+	
+	isWaiting = 0;
+	isSearching = 1;
+	useSpeedProfile = 1;
 	
 	while(1) {
 		moveForward(1);
@@ -128,6 +143,10 @@ void button1_interrupt(void) {
 void button2_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
+	
+	isWaiting = 0;
+	isSearching = 1;
+	useSpeedProfile = 1;
 
 	while(1) {
 		moveForward(1);
@@ -155,14 +174,13 @@ void button3_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
 	
-	targetSpeedX = 10;
-	
+	randomSearch();
 }
 
 
 
 void printInfo(void) {
-	printf("LF %4d|LD %4d|LS %4d|RS %4d|RD %4d|RF %4d|LENC %9d|RENC %9d|voltage %4d|angle %4d|curSpeedX %4f|distanceLeft %d|encCount %d\r\n",
-					LFSensor, LDSensor, LSSensor, RSSensor, RDSensor, RFSensor, getLeftEncCount(), getRightEncCount(), voltage, angle, curSpeedX, distanceLeft, encCount);
+	printf("LF %4d|LD %4d|LS %4d|RS %4d|RD %4d|RF %4d|LENC %9d|RENC %9d|voltage %4d|angle %4d|curSpeedX %4f|distanceLeft %d|encCount %d|sensorFeedback %d\r\n",
+					LFSensor, LDSensor, LSSensor, RSSensor, RDSensor, RFSensor, getLeftEncCount(), getRightEncCount(), voltage, angle, curSpeedX, distanceLeft, encCount, sensorError);
 }
 

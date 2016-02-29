@@ -6,6 +6,13 @@
 
 /* Global variables */
 
+// Maze data
+
+// Mouse state
+extern bool isWaiting;
+extern bool isSearching;
+extern bool isSpeedRunning;
+
 // Mechanical settings
 extern int encResolution;
 extern int gearRatio;
@@ -51,9 +58,12 @@ extern float accX;			//6m/s/s
 extern float decX; 
 extern float accW; 		//cm/s^2
 extern float decW;
+
 extern int moveSpeed;			//speed is in cm/s
 extern int maxSpeed;			//call speed_to_counts(maxSpeed);
 extern int turnSpeed;
+extern int searchSpeed;
+extern int stopSpeed;
 
 extern int leftEncCount;
 extern int rightEncCount;
@@ -64,6 +74,7 @@ extern int rightEncChange;
 extern int encChange;
 extern int distanceLeft;
 extern int sensorError;
+extern int sensorScale;
 extern int encCount;
 extern int oldEncCount;
 

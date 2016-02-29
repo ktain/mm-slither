@@ -9,4 +9,10 @@
 #define TURNLEFT180		-180
 #define TURNRIGHT180	180
 
+#define STOP 0
+#define GOFORWARD	1
+#define TURNLEFT	2
+#define TURNRIGHT	3
+#define TURNBACK 4
+
 #endif
