@@ -753,11 +753,6 @@
               <FilePath>..\user_Libraries\src\test.c</FilePath>
             </File>
             <File>
-              <FileName>pid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\user_Libraries\src\pid.c</FilePath>
-            </File>
-            <File>
               <FileName>turn.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\turn.c</FilePath>

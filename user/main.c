@@ -20,9 +20,9 @@ bool useSpeedProfile = 0;
 bool useOnlyGyroFeedback = 0;
 bool useOnlyEncoderFeedback = 0;
 int moveSpeed = 0*2;			// speed is in cm/s, double of actual speed
-int maxSpeed = 50*2;			// call speed_to_counts(maxSpeed)
+int maxSpeed = 30*2;			// call speed_to_counts(maxSpeed)
 int turnSpeed = 10*2;		
-int searchSpeed = 10*2;
+int searchSpeed = 30*2;
 int stopSpeed = 0*2;
 
 // Mouse state
@@ -35,8 +35,8 @@ int frontWallThresholdL = 30;
 int frontWallThresholdR = 30;
 int leftWallThreshold = 300;
 int rightWallThreshold = 300;
-int LDMiddleValue = 650;
-int RDMiddleValue = 650;
+int LDMiddleValue = 730;
+int RDMiddleValue = 730;
 
 
 // Sensor Thresholds
@@ -174,6 +174,8 @@ void button3_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
 	
+	resetLeftEncCount();
+	resetRightEncCount();
 	randomSearch();
 }
 

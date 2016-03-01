@@ -172,7 +172,7 @@ void lowBatCheck(void)
 		turnMotorOff;
 		
 		// Turn off all LEDs and emitters
-		ALL_LED_OFF;
+		ALL_LED_ON;
 		ALL_EM_OFF;
 		
 		// Keep buzzer on

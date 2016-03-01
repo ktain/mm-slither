@@ -4,10 +4,10 @@
 // Constants
 
 // Pivot turn
-#define TURNLEFT90		-89.9
-#define TURNRIGHT90		90.5
-#define TURNLEFT180		-180
-#define TURNRIGHT180	180
+#define TURNLEFT90		-86
+#define TURNRIGHT90		86
+#define TURNLEFT180		-176
+#define TURNRIGHT180	176
 
 #define STOP 0
 #define GOFORWARD	1

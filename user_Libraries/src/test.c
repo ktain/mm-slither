@@ -73,10 +73,6 @@ int wheelOffsetTest(int speed, int ontime) {
  * Random search using pivot turns
  */
 void randomSearch(void) {
-	resetSpeedProfile();
-	useIRSensors = 1;
-	useGyro = 0;
-	useSpeedProfile = 1;
 	isWaiting = 0;
 	isSearching = 1;
 	isSpeedRunning = 0;
@@ -84,17 +80,34 @@ void randomSearch(void) {
 	int cellCount = 1;						// number of explored cells
 	int turnCount = 0;
 	int remainingDist = 0;				// positional distance
+	bool quarterCellFlag = 0;
 	bool halfCellFlag = 0;
+	bool threeQuarterCellFlag = 0;
 	bool fullCellFlag = 0;
 	bool hasFrontWall = 0;
 	bool hasLeftWall = 0;
 	bool hasRightWall = 0;
 	int nextMove = 0;
 	
+	targetSpeedX = searchSpeed;
+	
 	while(1) {	// run forever
-		targetSpeedX = searchSpeed;
+		useIRSensors = 0;
+		useGyro = 0;
+		useSpeedProfile = 1;
+		
 		remainingDist = cellCount*cellDistance - encCount;
 		// Add check for front wall to turn off diag sensors briefly
+		
+		
+		// Reached quarter cell
+		if (!quarterCellFlag && (remainingDist <= cellDistance*3/4))	{
+			quarterCellFlag = 1;
+		}
+		
+		if (quarterCellFlag && !threeQuarterCellFlag)
+			useIRSensors = 1;
+		
 		
 		// Reached half cell
 		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
@@ -119,6 +132,18 @@ void randomSearch(void) {
 			else
 				nextMove = TURNBACK;
 		}
+		
+		// Reached three quarter cell
+		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {
+			threeQuarterCellFlag = 1;
+		}
+		
+		if (threeQuarterCellFlag) {
+			// Turn IRSensors off for the remaining distance
+			if (hasFrontWall)
+				useIRSensors = 0;
+		}
+		
 		
 		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
 		if (hasFrontWall || nextMove == TURNLEFT || nextMove == TURNRIGHT || nextMove == TURNBACK) {
@@ -146,18 +171,21 @@ void randomSearch(void) {
 				turnCount++;
 			}
 			else if (nextMove == TURNBACK) {
-				pivotTurn(TURNLEFT90);
+				pivotTurn(TURNLEFT180);
 				turnCount++;
 			}
 			else if (nextMove == GOFORWARD) {
 				// Continue moving forward
 			}
 			
+			quarterCellFlag = 0;
 			halfCellFlag = 0;
+			threeQuarterCellFlag = 0;
 			fullCellFlag = 0;
 			hasFrontWall = 0;
 			hasLeftWall = 0;
 			hasRightWall = 0;
+			
 		}
 	}
 	
