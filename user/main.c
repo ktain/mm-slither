@@ -1,7 +1,8 @@
 #include "main.h"
 
 /* Configure global variables */
-int maxPwm = 200;
+int maxPwm = 400;
+int alignPwm = 120;
 
 
 /* Configure encoder settings */
@@ -19,11 +20,11 @@ bool usePID = 0;
 bool useSpeedProfile = 0;
 bool useOnlyGyroFeedback = 0;
 bool useOnlyEncoderFeedback = 0;
-int moveSpeed = 0*2;			// speed is in cm/s, double of actual speed
-int maxSpeed = 30*2;			// call speed_to_counts(maxSpeed)
+int moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
+int maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
 int turnSpeed = 10*2;		
-int searchSpeed = 30*2;
-int stopSpeed = 0*2;
+int searchSpeed = 40*2;
+int stopSpeed = 10*2;
 
 // Mouse state
 bool isWaiting = 0;
@@ -113,6 +114,8 @@ void button1_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);	
 	
+	hugFrontWall(1360, 1360);
+/*	
 	isWaiting = 0;
 	isSearching = 1;
 	useSpeedProfile = 1;
@@ -135,7 +138,7 @@ void button1_interrupt(void) {
 		pivotTurn(TURNRIGHT90);
 		delay_ms(250);
 	}
-
+*/
 }
 
 
@@ -144,28 +147,7 @@ void button2_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
 	
-	isWaiting = 0;
-	isSearching = 1;
-	useSpeedProfile = 1;
-
-	while(1) {
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(TURNLEFT90);
-		delay_ms(250);
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(TURNLEFT90);
-		delay_ms(250);
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(TURNLEFT90);
-		delay_ms(250);
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(TURNLEFT90);
-		delay_ms(250);
-	}
+	alignFrontWall(1360, 1360); // left, right
 }
 
 

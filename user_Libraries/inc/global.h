@@ -24,6 +24,7 @@ extern int cellDistance;
 extern int leftBaseSpeed;
 extern int rightBaseSpeed;
 extern int maxPwm;
+extern int alignPwm;
 
 // Speed profile options
 extern bool useIRSensors;

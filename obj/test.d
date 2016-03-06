@@ -46,3 +46,4 @@
 ..\obj\test.o: ..\user_Libraries\inc\config.h
 ..\obj\test.o: ..\user_Libraries\inc\turn.h
 ..\obj\test.o: ..\user_Libraries\inc\buzzer.h
+..\obj\test.o: ..\user_Libraries\inc\align.h

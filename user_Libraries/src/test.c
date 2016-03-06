@@ -11,6 +11,7 @@
 #include "config.h"
 #include "turn.h"
 #include "buzzer.h"
+#include "align.h"
 
 
 /**
@@ -97,7 +98,6 @@ void randomSearch(void) {
 		useSpeedProfile = 1;
 		
 		remainingDist = cellCount*cellDistance - encCount;
-		// Add check for front wall to turn off diag sensors briefly
 		
 		
 		// Reached quarter cell
@@ -122,24 +122,29 @@ void randomSearch(void) {
 			
 			// Store destination cell's wall data
 			
-			// Get next movement (search algorithm)
-			if (!hasFrontWall)
-				nextMove = GOFORWARD;
-			else if (!hasLeftWall)
-				nextMove = TURNLEFT;
-			else if (!hasRightWall)
-				nextMove = TURNRIGHT;
-			else
-				nextMove = TURNBACK;
+			// Decide next movement (search algorithm)
+			while (1) {
+				nextMove = (millis() % 4) + 1;
+				if ((nextMove == GOFORWARD) && (!hasFrontWall))
+					break;	
+				if ((nextMove == TURNLEFT) && (!hasLeftWall))
+					break;
+				if ((nextMove == TURNRIGHT) && (!hasRightWall))
+					break;
+				if ((nextMove == TURNBACK) && (hasFrontWall && hasLeftWall && hasRightWall))
+					break;
+			}
+
 		}
 		
 		// Reached three quarter cell
-		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {
+		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {	// run once
 			threeQuarterCellFlag = 1;
 		}
 		
+		
 		if (threeQuarterCellFlag) {
-			// Turn IRSensors off for the remaining distance
+			// Check for front wall to turn off for the remaining distance
 			if (hasFrontWall)
 				useIRSensors = 0;
 		}
@@ -160,6 +165,10 @@ void randomSearch(void) {
 			shortBeep(200, 1000);
 			
 			// If has front wall, align with front wall
+			if (hasFrontWall) {
+				alignFrontWall(1360, 1360);	// left, right value
+			}
+			
 			
 			// Reached full cell, perform next move
 			if (nextMove == TURNLEFT) {

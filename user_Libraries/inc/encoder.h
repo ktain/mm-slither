@@ -6,6 +6,8 @@ int32_t getLeftEncCount(void);
 int32_t getRightEncCount(void);
 void resetRightEncCount(void);
 void resetLeftEncCount(void);
+void setLeftEncCount(int val);
+void setRightEncCount(int val);
 
 #endif
 

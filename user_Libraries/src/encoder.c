@@ -43,16 +43,23 @@ int32_t getRightEncCount(void) {
 	return TIM5->CNT;
 }
 
-void resetRightEncCount(void) {
-	TIM5->CNT = 0;
-}
-
 int32_t getLeftEncCount(void) {
 	//return TIM_GetCounter(TIM2);
 	return TIM2->CNT;
+}
+
+void resetRightEncCount(void) {
+	TIM5->CNT = 0;
 }
 
 void resetLeftEncCount(void) {
 	TIM2->CNT = 0;
 }
 
+void setRightEncCount(int val) {
+	TIM5->CNT = val;
+}
+
+void setLeftEncCount(int val) {
+	TIM2->CNT = val;
+}

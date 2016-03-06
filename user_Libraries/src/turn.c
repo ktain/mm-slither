@@ -11,6 +11,8 @@ void pivotTurn(float degrees) {
 	int startLeftEncCount = leftEncCount;
 	int startRightEncCount = rightEncCount;
 	targetSpeedX = 0;
+	int curt = millis();
+	while(millis() - curt < 100);
 	while( abs(leftEncCount - startLeftEncCount) + abs(rightEncCount - startRightEncCount) < dist_mm_to_counts(3.14*wheelBase*abs(degrees)/180) ) {
 		if (degrees < 0)
 			targetSpeedW = turnSpeed;
@@ -18,4 +20,7 @@ void pivotTurn(float degrees) {
 			targetSpeedW = -turnSpeed;
 	}
 	targetSpeedW = 0;
+  curt = millis();
+	while(millis() - curt < 100);
+
 }

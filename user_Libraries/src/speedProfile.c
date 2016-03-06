@@ -27,13 +27,13 @@ int posPwmW = 0;
 float kpX = 2;
 float kdX = 4;
 float kpW = 1;
-float kdW = 12;						//used in straight
-float kpW1 = 1;						//used for T1 and T3 in curve turn
+float kdW = 12;						//used in straight, default 12
+float kpW1 = 1;						//used for T1 and T3 in curve turn, default 1
 float kdW1 = 26;
 float kpW2 = 1;						//used for T2 in curve turn
 float kdW2 = 36;
-float accX = 30;					// acc/dec in cm/s/s
-float decX = 600; 				// default 600 = 6m/s/s  
+float accX = 70;					// acc/dec in cm/s/s
+float decX = 1000; 				// default 600 = 6m/s/s  
 float accW = 1; 					// cm/s^2
 float decW = 1;	
 
