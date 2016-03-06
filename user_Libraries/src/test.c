@@ -166,21 +166,21 @@ void randomSearch(void) {
 			
 			// If has front wall, align with front wall
 			if (hasFrontWall) {
-				alignFrontWall(1360, 1360);	// left, right value
+				alignFrontWall(1360, 1330);	// left, right value
 			}
 			
 			
 			// Reached full cell, perform next move
 			if (nextMove == TURNLEFT) {
-				pivotTurn(TURNLEFT90);
+				pivotTurn(turnLeft90);
 				turnCount++;
 			}
 			else if (nextMove == TURNRIGHT) {
-				pivotTurn(TURNRIGHT90);
+				pivotTurn(turnRight90);
 				turnCount++;
 			}
 			else if (nextMove == TURNBACK) {
-				pivotTurn(TURNLEFT180);
+				pivotTurn(turnLeft180);
 				turnCount++;
 			}
 			else if (nextMove == GOFORWARD) {

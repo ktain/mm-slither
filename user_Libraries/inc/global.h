@@ -112,4 +112,10 @@ extern int32_t Outz;
 extern int32_t aSpeed;
 extern int32_t angle; 
 
+// Pivot turn profile;
+extern int turnLeft90;
+extern int turnRight90;
+extern int turnLeft180;
+extern int turnRight180;
+
 #endif

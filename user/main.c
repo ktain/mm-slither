@@ -2,7 +2,7 @@
 
 /* Configure global variables */
 int maxPwm = 400;
-int alignPwm = 120;
+int alignPwm = 100;
 
 
 /* Configure encoder settings */
@@ -36,8 +36,8 @@ int frontWallThresholdL = 30;
 int frontWallThresholdR = 30;
 int leftWallThreshold = 300;
 int rightWallThreshold = 300;
-int LDMiddleValue = 730;
-int RDMiddleValue = 730;
+int LDMiddleValue = 850;
+int RDMiddleValue = 850;
 
 
 // Sensor Thresholds
@@ -45,6 +45,12 @@ int LFvalue1 = 1000;
 int RFvalue1 = 1000;
 int LFvalue2 = 500;
 int RFvalue2 = 500;
+
+// Pivot turn profile
+int	turnLeft90;
+int	turnRight90;
+int	turnLeft180;
+int	turnRight180;
 
 
 void systick(void) {
@@ -89,6 +95,51 @@ int main(void) {
 	
 	isWaiting = 1;
 	
+	/*
+	// Speed profile 2
+	maxPwm = 400;
+	alignPwm = 80;
+	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
+	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
+	turnSpeed = 20*2;		
+	searchSpeed = 40*2;
+	stopSpeed = 5*2;
+
+	turnLeft90 = -81;
+	turnRight90 = 82;
+	turnLeft180 = -170;
+	turnRight180 = 170;
+	*/
+	
+	/* Speed profile 3
+	maxPwm = 400;
+	alignPwm = 80;
+	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
+	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
+	turnSpeed = 30*2;		
+	searchSpeed = 40*2;
+	stopSpeed = 5*2;
+	
+	turnLeft90 = -70;
+	turnRight90 = 70;
+	turnLeft180 = -160;
+	turnRight180 = 160;
+	*/
+	
+	// Speed profile 4
+	maxPwm = 400;
+	alignPwm = 80;
+	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
+	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
+	turnSpeed = 40*2;		
+	searchSpeed = 40*2;
+	stopSpeed = 5*2;
+	
+	turnLeft90 = -53;
+	turnRight90 = 52;
+	turnLeft180 = -145;
+	turnRight180 = 145;
+	
 	while(1) {		
 		delay_ms(10);
 	}
@@ -114,8 +165,6 @@ void button1_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);	
 	
-	hugFrontWall(1360, 1360);
-/*	
 	isWaiting = 0;
 	isSearching = 1;
 	useSpeedProfile = 1;
@@ -123,22 +172,21 @@ void button1_interrupt(void) {
 	while(1) {
 		moveForward(1);
 		delay_ms(250);
-		pivotTurn(TURNRIGHT90);
+		pivotTurn(turnRight90);
 		delay_ms(250);
 		moveForward(1);
 		delay_ms(250);
-		pivotTurn(TURNRIGHT90);
+		pivotTurn(turnRight90);
 		delay_ms(250);
 		moveForward(1);
 		delay_ms(250);
-		pivotTurn(TURNRIGHT90);
+		pivotTurn(turnRight90);
 		delay_ms(250);
 		moveForward(1);
 		delay_ms(250);
-		pivotTurn(TURNRIGHT90);
+		pivotTurn(turnRight90);
 		delay_ms(250);
 	}
-*/
 }
 
 
