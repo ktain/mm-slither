@@ -11,7 +11,7 @@ void alignFrontWall(int LSensorVal, int RSensorVal){
 	useIRSensors = 1;
 	useSpeedProfile = 0;
 	int timeAllotted = millis();
-	while (millis() - timeAllotted < 300) {
+	while (millis() - timeAllotted < 100) {
 		setLeftPwm(LSensorVal - LFSensor);
 		setRightPwm(RSensorVal - RFSensor);
 	}

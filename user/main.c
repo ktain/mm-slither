@@ -128,14 +128,14 @@ int main(void) {
 	
 	// Speed profile 4
 	maxPwm = 400;
-	alignPwm = 80;
+	alignPwm = 60;
 	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
 	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
 	turnSpeed = 40*2;		
 	searchSpeed = 40*2;
 	stopSpeed = 5*2;
 	
-	turnLeft90 = -53;
+	turnLeft90 = -52;
 	turnRight90 = 52;
 	turnLeft180 = -145;
 	turnRight180 = 145;
