@@ -2,4 +2,4 @@
 -I C:\Keil_v4\ARM\RV31\INC 
 -I C:\Keil_v4\ARM\CMSIS\Include 
 -I C:\Keil_v4\ARM\Inc\ST\STM32F4xx 
--DUSE_STDPERIPH_DRIVER -o "..\obj\encoder.o" --omf_browse "..\obj\encoder.crf" --depend "..\obj\encoder.d" "..\user_Libraries\src\encoder.c"
+-DUSE_STDPERIPH_DRIVER -o "..\obj\initializegrid.o" --omf_browse "..\obj\initializegrid.crf" --depend "..\obj\initializegrid.d" "..\user_Libraries\src\initializeGrid.c"

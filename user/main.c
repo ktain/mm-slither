@@ -1,16 +1,29 @@
 #include "main.h"
 
-/* Configure global variables */
-int maxPwm = 400;
-int alignPwm = 100;
+/* Maze.h settings */
+int block[SIZE][SIZE] = {0};  //  ... 0 0 0 0       0 0 0 0
+                              //         DE TRACE   W S E N
+                              // [row] [col]
+                              // [ y ] [ x ]
+int input[SIZE][SIZE] = {0};  // to read in custom maze
+int distance[SIZE][SIZE] = {0};
 
+int xPos = 0;   // 0-15
+int yPos = 0;   // 0-15
+int moveCount = 0;
+int traceCount = 0;
+
+/* Configure global variables */
+int maxPwm = 200;
+int alignPwm = 200;
+int alignTime;
 
 /* Configure encoder settings */
-int encResolution = 1024;				// counts/mrev
+int encResolution = 2048;				// counts/mrev
 int gearRatio = 5;							// 5:1
 float wheelCircumference = 70.5 ;	// mm
 float wheelBase = 68;						// mm
-int cellDistance = 12800;				// 12.5 * encResolution
+int cellDistance = 25600;				// 12.5 * encResolution
 
 
 /* Configure speed profile options */
@@ -26,6 +39,7 @@ int turnSpeed = 10*2;
 int searchSpeed = 40*2;
 int stopSpeed = 10*2;
 
+
 // Mouse state
 bool isWaiting = 0;
 bool isSearching = 0;
@@ -36,8 +50,8 @@ int frontWallThresholdL = 30;
 int frontWallThresholdR = 30;
 int leftWallThreshold = 300;
 int rightWallThreshold = 300;
-int LDMiddleValue = 850;
-int RDMiddleValue = 850;
+int LDMiddleValue = 770;
+int RDMiddleValue = 770;
 
 
 // Sensor Thresholds
@@ -55,18 +69,17 @@ int	turnRight180;
 
 void systick(void) {
 	
-	// If not moving, check voltage
-	if (isWaiting)
-		lowBatCheck();	// stall if < 7.00V
+	// check voltage
+	lowBatCheck();	// stall if < 7.00V
 	
-	else if (isSearching) {
+	if (isSearching) {
 		// Collect data
 		if(useIRSensors)
 			readSensor();
-		
+
 		if(useGyro)
 			readGyro();
-		
+
 		// Run speed profile (with PID)
 		if(useSpeedProfile) {
 			speedProfile();
@@ -126,6 +139,7 @@ int main(void) {
 	turnRight180 = 160;
 	*/
 	
+	/*
 	// Speed profile 4
 	maxPwm = 400;
 	alignPwm = 60;
@@ -139,6 +153,38 @@ int main(void) {
 	turnRight90 = 52;
 	turnLeft180 = -145;
 	turnRight180 = 145;
+	*/
+	
+	// Speed profile 12v 512 1
+	/*
+	maxPwm = 900;
+	alignPwm = 300;
+	moveSpeed = 60*2;			// speed is in cm/s, double of actual speed
+	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
+	turnSpeed = 40*2;		
+	searchSpeed = 60*2;
+	stopSpeed = 30*2;
+	
+	turnLeft90 = -70;
+	turnRight90 = 70;
+	turnLeft180 = -160;
+	turnRight180 = 160;
+	*/
+	
+	// Speed profile 12v 512 2
+	maxPwm = 300;
+	alignPwm = 200;
+	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
+	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
+	turnSpeed = 40*2;		
+	searchSpeed = 50*2;
+	stopSpeed = 20*2;
+	alignTime = 300;
+	
+	turnLeft90 = -70;
+	turnRight90 = 70;
+	turnLeft180 = -160;
+	turnRight180 = 160;
 	
 	while(1) {		
 		delay_ms(10);
@@ -155,7 +201,7 @@ void button0_interrupt(void) {
 		readSensor();
 		ledTest();					// No delay
 		printInfo();				// No delay
-		delay_ms(10);
+		delay_ms(2);
 	}
 }
 
@@ -165,28 +211,9 @@ void button1_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);	
 	
-	isWaiting = 0;
-	isSearching = 1;
-	useSpeedProfile = 1;
-	
-	while(1) {
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(turnRight90);
-		delay_ms(250);
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(turnRight90);
-		delay_ms(250);
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(turnRight90);
-		delay_ms(250);
-		moveForward(1);
-		delay_ms(250);
-		pivotTurn(turnRight90);
-		delay_ms(250);
-	}
+	initializeGrid();
+	printGrid();
+	visualizeGrid();
 }
 
 
@@ -195,7 +222,13 @@ void button2_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
 	
-	alignFrontWall(1360, 1360); // left, right
+	printf("Button 2 pressed\n\r");
+	resetLeftEncCount();
+	resetRightEncCount();
+	initializeGrid();
+	printGrid();
+	floodCenter();
+	printf("Finished Button 2 ISR\n\r");
 }
 
 
@@ -206,7 +239,7 @@ void button3_interrupt(void) {
 	
 	resetLeftEncCount();
 	resetRightEncCount();
-	randomSearch();
+	randomMovement();
 }
 
 

@@ -71,9 +71,9 @@ int wheelOffsetTest(int speed, int ontime) {
 
 
 /*
- * Random search using pivot turns
+ * Random movements using pivot turns
  */
-void randomSearch(void) {
+void randomMovement(void) {
 	isWaiting = 0;
 	isSearching = 1;
 	isSpeedRunning = 0;
@@ -149,7 +149,6 @@ void randomSearch(void) {
 				useIRSensors = 0;
 		}
 		
-		
 		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
 		if (hasFrontWall || nextMove == TURNLEFT || nextMove == TURNRIGHT || nextMove == TURNBACK) {
 			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
@@ -159,14 +158,14 @@ void randomSearch(void) {
 		}
 		
 		// Reached full cell
-		if (!fullCellFlag && (remainingDist <= 0)) {
+		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2000) || (RFSensor > 2000)) {
 			fullCellFlag = 1;
 			cellCount++;
 			shortBeep(200, 1000);
 			
 			// If has front wall, align with front wall
 			if (hasFrontWall) {
-				alignFrontWall(1360, 1330);	// left, right value
+				alignFrontWall(1360, 1330, 100);	// left, right value
 			}
 			
 			

@@ -54,3 +54,4 @@
 ..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\turn.h
 ..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\align.h
 ..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\speedProfile.h
+..\obj\stm32f4xx_it.o: ..\user_Libraries\inc\maze.h

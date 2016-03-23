@@ -19,6 +19,7 @@
 #include "turn.h"
 #include "align.h"
 #include "speedProfile.h"
+#include "maze.h"
 
 void systick(void);
 void button0_interrupt(void);

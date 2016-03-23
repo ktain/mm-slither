@@ -9,4 +9,9 @@
 #define TURNRIGHT	3
 #define TURNBACK 4
 
+#define MOVEN 5
+#define MOVEE 6
+#define MOVES 7
+#define MOVEW 8
+
 #endif

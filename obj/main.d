@@ -53,3 +53,4 @@
 ..\obj\main.o: ..\user_Libraries\inc\turn.h
 ..\obj\main.o: ..\user_Libraries\inc\align.h
 ..\obj\main.o: ..\user_Libraries\inc\speedProfile.h
+..\obj\main.o: ..\user_Libraries\inc\maze.h
