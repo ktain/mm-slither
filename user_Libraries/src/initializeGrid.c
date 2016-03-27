@@ -64,3 +64,67 @@ void initializeGrid() {
     }
   }
 }
+
+/*
+ * Function name: initMaze()
+ * Description: Initializes a 16 by 16 square maze. 
+ *              Lower left square is (0, 0).
+ *              Initializes known walls.
+ */
+void initMaze(MAZE * m) 
+{	
+  //  0 0 0 0       0 0 0 0
+  //     DE TRACE   W S E N
+  int i, j, k;
+
+  // Map known walls
+  m->walls[0][0] = SWALL | WWALL | EWALL;  // Starting walls
+  m->walls[0][1] = SWALL | WWALL;
+
+  // Map north wall
+  for (j = 0; j < SIZE; j++) 
+    m->walls[SIZE-1][j] |= NWALL;
+
+  // Map east wall
+  for (i = 0; i < SIZE; i++)   
+    m->walls[i][SIZE-1] |= EWALL;
+
+  // Map south wall
+  for (j = 0; j < SIZE; j++) 
+    m->walls[0][j] |= SWALL;
+
+  // Map west wall
+  for (i = 0; i < SIZE; i++) 
+    m->walls[i][0] |= WWALL;
+}
+
+/*
+ * Function name: initDist()
+ * Description: Initializes floodfill distances for 16 by 16 square maze. 
+ *              Lower left square is (0, 0).
+ *				Initializes distances starting from goal instead of mouse.
+ */
+void initDist(MAZE * maze)
+{
+  //Set all distances to max
+  int i, j;
+  for(i = 0; i < SIZE; i++)
+    for(j = 0; j < SIZE; j++)
+      maze->dist[i][j] = MAX_DIST;
+}
+
+void readMaze(MAZE * m) 
+{
+	printf("Enter custom maze: \n");
+  int i;
+	for(i = SIZE-1; i >= 0; i--)
+	{
+    int j;
+		for(j = 0; j < SIZE; j++)
+		{
+			int temp = 0;
+			scanf("%d", &temp);
+			m->input[i][j] = (unsigned char) temp;
+		}
+	}
+}

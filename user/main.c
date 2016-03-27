@@ -1,17 +1,17 @@
 #include "main.h"
 
 /* Maze.h settings */
-int block[SIZE][SIZE] = {0};  //  ... 0 0 0 0       0 0 0 0
-                              //         DE TRACE   W S E N
-                              // [row] [col]
-                              // [ y ] [ x ]
-int input[SIZE][SIZE] = {0};  // to read in custom maze
-int distance[SIZE][SIZE] = {0};
 
-int xPos = 0;   // 0-15
-int yPos = 0;   // 0-15
-int moveCount = 0;
-int traceCount = 0;
+MAZE m = { .input = {0}, .walls = {0}, .dist = {0} };
+
+COORD goal = { .row = 7, .col = 7 };
+
+MOUSE mouse = { 
+          .orientation = 'N', 
+          .location = { .row = 0, .col = 0 }, 
+          .traceCount = 0,
+          .moveCount = 0
+        };
 
 /* Configure global variables */
 int maxPwm = 200;
@@ -225,9 +225,16 @@ void button2_interrupt(void) {
 	printf("Button 2 pressed\n\r");
 	resetLeftEncCount();
 	resetRightEncCount();
-	initializeGrid();
-	printGrid();
-	floodCenter();
+  //Initialize the maze outside walls
+	initMaze(&m);
+	//Reads in an input file with all maze wall data (FOR VIRTUAL SIM ONLY) 
+	readMaze(&m);
+	//Prints wall info for each cell as integers 
+	printGrid(&m);
+	//Prints the grid with mouse location and distances to center cells
+	visualizeGrid(&m, mouse);	
+  //Run virtual mouse 
+	mouser(&m, goal, &mouse);
 	printf("Finished Button 2 ISR\n\r");
 }
 
