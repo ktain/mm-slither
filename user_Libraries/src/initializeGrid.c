@@ -65,6 +65,8 @@ void initializeGrid() {
   }
 }
 
+/* ------------------------ New code --------------------------------------- */
+
 /*
  * Function name: initMaze()
  * Description: Initializes a 16 by 16 square maze. 

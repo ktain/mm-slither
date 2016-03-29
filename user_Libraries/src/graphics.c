@@ -20,7 +20,6 @@ void printGrid() {
   }
 }
 
-
 /* 
  * Function name: visualizeGrid()
  * Description: Visualize the grid by decoding the value of
@@ -51,8 +50,6 @@ void visualizeGrid() {
     
     printf("\n\r");
   
-    
-    
     /*
      * Print west and east wall, object, and traces
      */
