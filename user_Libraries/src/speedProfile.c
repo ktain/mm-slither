@@ -9,6 +9,7 @@
 #include "encoder.h"
 #include "pwm.h"
 #include "config.h"
+#include "maze.h"
 
 float curSpeedX = 0;
 float curSpeedW = 0;
@@ -251,24 +252,35 @@ float abs (float number) {
  *	Straight movement
  */
 void moveForward(int cells) {
+	resetSpeedProfile();
+	
 	useIRSensors = 1;
 	useGyro = 0;
 	usePID = 1;
+	useSpeedProfile = 1;
+	isWaiting = 0;
+	isSearching = 0;
+	isSpeedRunning = 1;
 	
-	targetSpeedW = 0;
+	int	remainingDist = cells*cellDistance;
+	
 	targetSpeedX = maxSpeed;
-	distanceLeft = cells*cellDistance;
 	
 	while( (encCount - oldEncCount) < cells*cellDistance ) {
-		if(distanceLeft < cellDistance/2)
+		remainingDist = cells*cellDistance - encCount;
+		if(remainingDist < cellDistance/2)
 			useIRSensors = 0;
-		if(needToDecelerate(distanceLeft, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(moveSpeed)) < decX)
+		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(moveSpeed)) < decX)
 			targetSpeedX = maxSpeed;
 		else
 			targetSpeedX = moveSpeed;
 	}
-	targetSpeedX = moveSpeed;
+	targetSpeedX = 0;
+	turnMotorOff;
 	oldEncCount = encCount;
+	
+	useSpeedProfile = 0;
+	isSpeedRunning = 0;
 }
 
 

@@ -19,6 +19,8 @@
  * Flood fill search to center using pivot turns
  */
 void floodCenter(void) {
+	resetSpeedProfile();
+	
 	isWaiting = 0;
 	isSearching = 1;
 	isSpeedRunning = 0;
@@ -250,7 +252,7 @@ void floodCenter(void) {
 		}
 	}
 	
-	// Reached center
+	// Finish moving across last cell
 	while(remainingDist > 0) {
 		remainingDist = cellCount*cellDistance - encCount;
 		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
@@ -258,6 +260,13 @@ void floodCenter(void) {
 		else
 			targetSpeedX = stopSpeed;
 	}
+	
+	// Place trace
+	if (!hasTrace(block[yPos][xPos])) {
+		block[yPos][xPos] |= 16;
+		traceCount++;
+	}
+	
 	targetSpeedX = 0;
 	turnMotorOff;
 	useSpeedProfile = 0;

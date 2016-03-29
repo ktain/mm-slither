@@ -40,3 +40,4 @@
 ..\obj\speedprofile.o: ..\user_Libraries\inc\encoder.h
 ..\obj\speedprofile.o: ..\user_Libraries\inc\pwm.h
 ..\obj\speedprofile.o: ..\user_Libraries\inc\config.h
+..\obj\speedprofile.o: ..\user_Libraries\inc\maze.h

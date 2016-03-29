@@ -207,6 +207,12 @@ void randomMovement(void) {
 }
 
 void speedRun(void) {
+	resetSpeedProfile();
+	
+	useIRSensors = 1;
+	useGyro = 0;
+	usePID = 1;
+	useSpeedProfile = 1;
 	isWaiting = 0;
 	isSearching = 0;
 	isSpeedRunning = 1;
@@ -291,8 +297,9 @@ void speedRun(void) {
 			quarterCellFlag = 1;
 		}
 		
-		if (quarterCellFlag && !threeQuarterCellFlag)	// middle half
-			useIRSensors = 1;
+		if (quarterCellFlag && !threeQuarterCellFlag)	{ // middle half
+			
+		}
 		
 		
 		// Reached half cell
@@ -356,17 +363,16 @@ void speedRun(void) {
 		
 		
 		if (threeQuarterCellFlag) {
+			
 		}
 		
-		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
+		// If needs to turn, decelerate to 0 within half a cell distance
 		if (willTurn()) {
 			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
 				targetSpeedX = maxSpeed;
 			else
 				targetSpeedX = stopSpeed;
 		}
-		else 
-			targetSpeedX = maxSpeed;
 		
 		// Reached full cell
 		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2500) || (RFSensor > 2500)) {	// run once
@@ -377,19 +383,15 @@ void speedRun(void) {
 			
 			// Reached full cell, perform next move
 			if (nextMove == MOVEN) {
-				printf("Moving N\n\r");
 				moveN();
 			}
 			else if (nextMove == MOVEE) {
-				printf("Moving E\n\r");
 				moveE();
 			}
 			else if (nextMove == MOVES) {
-				printf("Moving S\n\r");
 				moveS();
 			}
 			else if (nextMove == MOVEW) {
-				printf("Moving W\n\r");
 				moveW();
 			}
 			
@@ -401,28 +403,18 @@ void speedRun(void) {
 		}
 	}
 	
+	// Finish moving across last cell
+	while(remainingDist > 0) {
+		remainingDist = cellCount*cellDistance - encCount;
+		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+			targetSpeedX = searchSpeed;
+		else
+			targetSpeedX = stopSpeed;
+	}
+	
 	targetSpeedX = 0;
-	
-	// Reached center
-	// Move one more cell
-	alignFrontWall(1360, 1330, 1000);
-	
-	// Update position
-	if (orientation == 'N') {
-		yPos += 1;
-	}
-	if (orientation == 'E') {
-		xPos += 1;
-	}
-	if (orientation == 'S') {
-		yPos -= 1;
-	}
-	if (orientation == 'W') {
-		xPos -= 1;
-	}
-		
-	useSpeedProfile = 0;
 	turnMotorOff;
+	useSpeedProfile = 0;
 	
 	if (DEBUG) visualizeGrid();
 }

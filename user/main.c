@@ -192,7 +192,7 @@ int main(void) {
 	maxPwm = 500;
 	alignPwm = 200;
 	moveSpeed = 70*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
+	maxSpeed = 200*2;			// call speed_to_counts(maxSpeed)
 	turnSpeed = 40*2;		
 	searchSpeed = 70*2;
 	stopSpeed = 30*2;
@@ -252,6 +252,8 @@ void button3_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
 	printf("Button 3 pressed\n\r");
+
+	moveForward(10);
 	
 	/*
 	resetLeftEncCount();
