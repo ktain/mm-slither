@@ -239,6 +239,25 @@ void speedRun(void) {
 	
 	resetLeftEncCount();
 	resetRightEncCount();
+
+  //TODO BEFORE SETTING SPEED, CALCULATE ACTUAL MOVES TO MAKE 
+  
+  /*
+  while(!atCenter())
+  {
+    int currCellCount = cellCount;
+
+    while(!hasNorth(block[yPos][xPos]))
+    {
+
+    }
+
+  }
+  */
+
+  //TODO AFTERWARDS, WE HAVE A QUEUE WITH THE MOVES TO DO 
+  //(OR JUST RUN THE DISTANCES)
+  //SET SPEED
 	targetSpeedX = maxSpeed;
 	
 	while(!atCenter()) {
