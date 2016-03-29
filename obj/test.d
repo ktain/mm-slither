@@ -47,3 +47,5 @@
 ..\obj\test.o: ..\user_Libraries\inc\turn.h
 ..\obj\test.o: ..\user_Libraries\inc\buzzer.h
 ..\obj\test.o: ..\user_Libraries\inc\align.h
+..\obj\test.o: ..\user_Libraries\inc\maze.h
+..\obj\test.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h

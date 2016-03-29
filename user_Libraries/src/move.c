@@ -30,12 +30,6 @@ void moveN() {
   // Update orientation
   orientation = 'N';
 
-  // Place trace
-  if (!hasTrace(block[yPos][xPos])) {
-    block[yPos][xPos] |= 16;
-    traceCount++;
-  }
-
 }
 
 /* Move east */
@@ -59,12 +53,6 @@ void moveE() {
 
   // Update orientation
   orientation = 'E';
-
-  // Place trace
-  if (!hasTrace(block[yPos][xPos])) {
-    block[yPos][xPos] |= 16;
-    traceCount++;
-  }
 }
 
 /* Move south */
@@ -88,11 +76,6 @@ void moveS() {
   // Update orientation
   orientation = 'S';
 	
-  // Place trace
-  if (!hasTrace(block[yPos][xPos])) {
-    block[yPos][xPos] |= 16;
-    traceCount++;
-  }
 }
 
 /* Move west */
@@ -116,11 +99,6 @@ void moveW() {
   // Update orientation
   orientation = 'W';
 
-  // Place trace
-  if (!hasTrace(block[yPos][xPos])) {
-    block[yPos][xPos] |= 16;
-    traceCount++;
-  }
 }
 
 

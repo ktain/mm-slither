@@ -26,6 +26,7 @@ extern int rightBaseSpeed;
 extern int maxPwm;
 extern int alignPwm;
 extern int alignTime;
+extern int turnDelay;
 
 // Speed profile options
 extern bool useIRSensors;

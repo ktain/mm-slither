@@ -12,6 +12,8 @@
 #include "turn.h"
 #include "buzzer.h"
 #include "align.h"
+#include "maze.h"
+#include <stdio.h>
 
 
 /**
@@ -81,6 +83,7 @@ void randomMovement(void) {
 	int cellCount = 1;						// number of explored cells
 	int turnCount = 0;
 	int remainingDist = 0;				// positional distance
+	bool beginCellFlag = 0;
 	bool quarterCellFlag = 0;
 	bool halfCellFlag = 0;
 	bool threeQuarterCellFlag = 0;
@@ -93,12 +96,15 @@ void randomMovement(void) {
 	targetSpeedX = searchSpeed;
 	
 	while(1) {	// run forever
-		useIRSensors = 0;
-		useGyro = 0;
-		useSpeedProfile = 1;
-		
 		remainingDist = cellCount*cellDistance - encCount;
 		
+		if (!beginCellFlag && (remainingDist <= cellDistance))	{	// run once
+			beginCellFlag = 1;
+			
+			useIRSensors = 1;
+			useGyro = 0;
+			useSpeedProfile = 1;
+		}
 		
 		// Reached quarter cell
 		if (!quarterCellFlag && (remainingDist <= cellDistance*3/4))	{
@@ -186,6 +192,7 @@ void randomMovement(void) {
 				// Continue moving forward
 			}
 			
+			beginCellFlag = 0;
 			quarterCellFlag = 0;
 			halfCellFlag = 0;
 			threeQuarterCellFlag = 0;
@@ -199,3 +206,214 @@ void randomMovement(void) {
 	
 }
 
+void speedRun(void) {
+	isWaiting = 0;
+	isSearching = 0;
+	isSpeedRunning = 1;
+	
+	int cellCount = 1;						// number of explored cells
+	int remainingDist = 0;				// positional distance
+	bool beginCellFlag = 0;
+	bool quarterCellFlag = 0;
+	bool halfCellFlag = 0;
+	bool threeQuarterCellFlag = 0;
+	bool fullCellFlag = 0;
+
+	int distN = 0;   // distances around current position
+  int distE = 0;
+  int distS = 0;
+  int distW = 0;
+	
+	// Close off untraced routes
+	closeUntracedCells();
+	
+	// Update distanced
+	updateDistance();
+	
+	visualizeGrid();
+	
+	// Starting cell
+	xPos = 0;
+	yPos = 0;
+	orientation = 'N';
+	
+	resetLeftEncCount();
+	resetRightEncCount();
+	targetSpeedX = maxSpeed;
+	
+	while(!atCenter()) {
+		remainingDist = cellCount*cellDistance - encCount;
+		
+		// Beginning of cell
+		if (!beginCellFlag && (remainingDist <= cellDistance))	{	// run once
+			beginCellFlag = 1;
+			
+			useIRSensors = 1;
+			useGyro = 0;
+			useSpeedProfile = 1;
+			
+			// Update position
+			if (orientation == 'N') {
+				yPos += 1;
+			}
+			if (orientation == 'E') {
+				xPos += 1;
+			}
+			if (orientation == 'S') {
+				yPos -= 1;
+			}
+			if (orientation == 'W') {
+				xPos -= 1;
+			}
+		}
+		
+		// Reached quarter cell
+		if (!quarterCellFlag && (remainingDist <= cellDistance*3/4))	{	// run once
+			quarterCellFlag = 1;
+		}
+		
+		if (quarterCellFlag && !threeQuarterCellFlag)	// middle half
+			useIRSensors = 1;
+		
+		
+		// Reached half cell
+		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
+			halfCellFlag = 1;
+			
+			// Get distances around current block
+			distN = (hasNorth(block[yPos][xPos]))? 500 : distance[yPos + 1][xPos];
+			distE = (hasEast(block[yPos][xPos]))? 500 : distance[yPos][xPos + 1];
+			distS = (hasSouth(block[yPos][xPos]))? 500 : distance[yPos - 1][xPos];
+			distW = (hasWest(block[yPos][xPos]))? 500 : distance[yPos][xPos - 1];
+			
+			// Decide next movement
+			if (DEBUG) printf("Deciding next movement\n\r");
+			// 1. Pick the shortest route
+			if ( (distN < distE) && (distN < distS) && (distN < distW) )
+				nextMove = MOVEN;
+			else if ( (distE < distN) && (distE < distS) && (distE < distW) )
+				nextMove = MOVEE;
+			else if ( (distS < distE) && (distS < distN) && (distS < distW) )
+				nextMove = MOVES;
+			else if ( (distW < distE) && (distW < distS) && (distW < distN) )
+				nextMove = MOVEW;
+			 
+			// 2. If multiple equally short routes, go straight if possible
+			else if ( orientation == 'N' && !hasNorth(block[yPos][xPos]) )
+				nextMove = MOVEN;
+			else if ( orientation == 'E' && !hasEast(block[yPos][xPos]) )
+				nextMove = MOVEE;
+			else if ( orientation == 'S' && !hasSouth(block[yPos][xPos]) )
+				nextMove = MOVES;
+			else if ( orientation == 'W' && !hasWest(block[yPos][xPos]) )
+				nextMove = MOVEW;
+			 
+			// 3. Otherwise prioritize N > E > S > W
+			else if (!hasNorth(block[yPos][xPos]))
+				nextMove = MOVEN;
+			else if (!hasEast(block[yPos][xPos]))
+				nextMove = MOVEE;
+			else if (!hasSouth(block[yPos][xPos]))
+				nextMove = MOVES;
+			else if (!hasWest(block[yPos][xPos]))
+				nextMove = MOVEW;
+			
+			if (DEBUG) printf("nextMove %d\n\r", nextMove);
+			
+			else {
+				if (DEBUG) {
+					printf("Stuck... Can't find center.\n\r");
+					turnMotorOff;
+					useSpeedProfile = 0;
+					while(1);
+				}
+			}
+		}
+		
+		// Reached three quarter cell
+		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {	// run once
+			threeQuarterCellFlag = 1;
+		}
+		
+		
+		if (threeQuarterCellFlag) {
+		}
+		
+		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
+		if (willTurn()) {
+			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+				targetSpeedX = maxSpeed;
+			else
+				targetSpeedX = stopSpeed;
+		}
+		else 
+			targetSpeedX = maxSpeed;
+		
+		// Reached full cell
+		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2500) || (RFSensor > 2500)) {	// run once
+			if (DEBUG) printf("Reached full cell\n\r");
+			fullCellFlag = 1;
+			cellCount++;
+			shortBeep(200, 1000);
+			
+			// Reached full cell, perform next move
+			if (nextMove == MOVEN) {
+				printf("Moving N\n\r");
+				moveN();
+			}
+			else if (nextMove == MOVEE) {
+				printf("Moving E\n\r");
+				moveE();
+			}
+			else if (nextMove == MOVES) {
+				printf("Moving S\n\r");
+				moveS();
+			}
+			else if (nextMove == MOVEW) {
+				printf("Moving W\n\r");
+				moveW();
+			}
+			
+			beginCellFlag = 0;
+			quarterCellFlag = 0;
+			halfCellFlag = 0;
+			threeQuarterCellFlag = 0;
+			fullCellFlag = 0;
+		}
+	}
+	
+	targetSpeedX = 0;
+	
+	// Reached center
+	// Move one more cell
+	alignFrontWall(1360, 1330, 1000);
+	
+	// Update position
+	if (orientation == 'N') {
+		yPos += 1;
+	}
+	if (orientation == 'E') {
+		xPos += 1;
+	}
+	if (orientation == 'S') {
+		yPos -= 1;
+	}
+	if (orientation == 'W') {
+		xPos -= 1;
+	}
+		
+	useSpeedProfile = 0;
+	turnMotorOff;
+	
+	if (DEBUG) visualizeGrid();
+}
+
+void closeUntracedCells(void) {
+	int j, k;
+	for (j = 0; j < SIZE; j++) {
+		for (k = 0; k < SIZE; k++) {
+			if (!hasTrace(block[j][k]))
+				block[j][k] |= 15;
+		}
+	}
+}

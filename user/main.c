@@ -17,6 +17,14 @@ int traceCount = 0;
 int maxPwm = 200;
 int alignPwm = 200;
 int alignTime;
+int turnDelay;
+
+/* Configure search variables */
+bool hasFrontWall = 0;
+bool hasLeftWall = 0;
+bool hasRightWall = 0;
+int nextMove = 0;
+char orientation = 'N';
 
 /* Configure encoder settings */
 int encResolution = 2048;				// counts/mrev
@@ -37,7 +45,7 @@ int moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
 int maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
 int turnSpeed = 10*2;		
 int searchSpeed = 40*2;
-int stopSpeed = 10*2;
+int stopSpeed = 20*2;
 
 
 // Mouse state
@@ -50,8 +58,8 @@ int frontWallThresholdL = 30;
 int frontWallThresholdR = 30;
 int leftWallThreshold = 300;
 int rightWallThreshold = 300;
-int LDMiddleValue = 770;
-int RDMiddleValue = 770;
+int LDMiddleValue = 780;
+int RDMiddleValue = 560;
 
 
 // Sensor Thresholds
@@ -86,6 +94,15 @@ void systick(void) {
 		}
 	}
 	
+	if (isSpeedRunning) {
+		if (useIRSensors)
+			readSensor();
+		
+		// Run speed profile (with PID)
+		if(useSpeedProfile) {
+			speedProfile();
+		}
+	}
 }
 
 
@@ -172,14 +189,15 @@ int main(void) {
 	*/
 	
 	// Speed profile 12v 512 2
-	maxPwm = 300;
+	maxPwm = 500;
 	alignPwm = 200;
-	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
+	moveSpeed = 70*2;			// speed is in cm/s, double of actual speed
 	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
 	turnSpeed = 40*2;		
-	searchSpeed = 50*2;
-	stopSpeed = 20*2;
-	alignTime = 300;
+	searchSpeed = 70*2;
+	stopSpeed = 30*2;
+	alignTime = 200;
+	turnDelay = 50;
 	
 	turnLeft90 = -70;
 	turnRight90 = 70;
@@ -195,12 +213,13 @@ int main(void) {
 void button0_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
+	printf("Button 0 pressed\n\r");
 	
 	angle = 0;
 	while(1) {
 		readSensor();
 		ledTest();					// No delay
-		printInfo();				// No delay
+		printInfo();				
 		delay_ms(2);
 	}
 }
@@ -210,10 +229,9 @@ void button0_interrupt(void) {
 void button1_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);	
+	printf("Button 1 pressed\n\r");
 	
-	initializeGrid();
-	printGrid();
-	visualizeGrid();
+	speedRun();
 }
 
 
@@ -221,14 +239,11 @@ void button1_interrupt(void) {
 void button2_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
-	
 	printf("Button 2 pressed\n\r");
-	resetLeftEncCount();
-	resetRightEncCount();
+	
 	initializeGrid();
 	printGrid();
 	floodCenter();
-	printf("Finished Button 2 ISR\n\r");
 }
 
 
@@ -236,10 +251,13 @@ void button2_interrupt(void) {
 void button3_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
+	printf("Button 3 pressed\n\r");
 	
+	/*
 	resetLeftEncCount();
 	resetRightEncCount();
 	randomMovement();
+	*/
 }
 
 

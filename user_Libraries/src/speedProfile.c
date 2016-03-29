@@ -32,8 +32,8 @@ float kpW1 = 1;						//used for T1 and T3 in curve turn, default 1
 float kdW1 = 26;
 float kpW2 = 1;						//used for T2 in curve turn
 float kdW2 = 36;
-float accX = 70;					// acc/dec in cm/s/s
-float decX = 7000; 				// default 600 = 6m/s/s  
+float accX = 100;					// acc/dec in cm/s/s
+float decX = 2000; 				// default 600 = 6m/s/s  
 float accW = 1; 					// cm/s^2
 float decW = 1;	
 
@@ -50,7 +50,7 @@ int32_t distanceLeft = 0;
 int32_t encCount = 0;
 int32_t oldEncCount = 0;
 int sensorError = 0;
-int sensorScale = 20;
+int sensorScale = 50;
 
 int gyroFeedbackRatio = 5700;
 
@@ -256,7 +256,7 @@ void moveForward(int cells) {
 	usePID = 1;
 	
 	targetSpeedW = 0;
-	targetSpeedX = moveSpeed;
+	targetSpeedX = maxSpeed;
 	distanceLeft = cells*cellDistance;
 	
 	while( (encCount - oldEncCount) < cells*cellDistance ) {
@@ -274,13 +274,13 @@ void moveForward(int cells) {
 
 void getSensorError(void)
 {
-	if (LDSensor > leftWallThreshold && RDSensor > rightWallThreshold)
+	if (LDSensor > LDMiddleValue && RDSensor > RDMiddleValue)
 		sensorError = RDSensor - LDSensor;
-	if(LDSensor > leftWallThreshold)
+	if(LDSensor > LDMiddleValue)
 		sensorError = LDMiddleValue - LDSensor;
-	else if(RDSensor > rightWallThreshold)
+	else if(RDSensor > RDMiddleValue)
 		sensorError = RDSensor - RDMiddleValue;
-	else	
+	else
 		sensorError = 0;
 }
 

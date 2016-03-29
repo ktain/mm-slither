@@ -14,15 +14,9 @@
 #include "maze.h"
 #include <stdio.h>
 
-bool hasFrontWall = 0;
-bool hasLeftWall = 0;
-bool hasRightWall = 0;
-int nextMove = 0;
-char orientation = 'N';
-
 
 /*
- * Random search using pivot turns
+ * Flood fill search to center using pivot turns
  */
 void floodCenter(void) {
 	isWaiting = 0;
@@ -42,6 +36,13 @@ void floodCenter(void) {
   int distS = 0;
   int distW = 0;
 	
+	// Starting cell
+	xPos = 0;
+	yPos = 0;
+	orientation = 'N';
+	
+	resetSpeedProfile();
+	
 	// Place trace at starting position
   if (!hasTrace(block[yPos][xPos])) {
     block[yPos][xPos] |= 16;
@@ -51,15 +52,14 @@ void floodCenter(void) {
 	targetSpeedX = searchSpeed;
 	
 	while(!atCenter()) {
-		useIRSensors = 0;
-		useGyro = 0;
-		useSpeedProfile = 1;
-		
 		remainingDist = cellCount*cellDistance - encCount;
 		
 		// Beginning of cell
 		if (!beginCellFlag && (remainingDist <= cellDistance))	{	// run once
 			beginCellFlag = 1;
+			useIRSensors = 1;
+			useGyro = 0;
+			useSpeedProfile = 1;
 			
 			// Update position
 			if (orientation == 'N') {
@@ -167,8 +167,7 @@ void floodCenter(void) {
 					for (int k = 0; k < SIZE; k++) {
 						if ( !((j == 0) && (k == 0)))
 							// If dead end, isolate block
-							if ((hasNorth(
-								block[j][k]) + hasEast(block[j][k]) +
+							if ((hasNorth(block[j][k]) + hasEast(block[j][k]) +
 									hasSouth(block[j][k]) + hasWest(block[j][k])) >= 3) {
 								block[j][k] |= 32;
 								block[j][k] |= 15;
@@ -209,11 +208,17 @@ void floodCenter(void) {
 			targetSpeedX = searchSpeed;
 		
 		// Reached full cell
-		if ((!fullCellFlag && (remainingDist <= 0))) {	// run once
+		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2500) || (RFSensor > 2500)) {	// run once
 			if (DEBUG) printf("Reached full cell\n\r");
 			fullCellFlag = 1;
 			cellCount++;
 			shortBeep(200, 1000);
+			
+			// Place trace
+			if (!hasTrace(block[yPos][xPos])) {
+				block[yPos][xPos] |= 16;
+				traceCount++;
+			}
 			
 			// If has front wall, align with front wall
 			if (hasFrontWall) {
@@ -245,30 +250,19 @@ void floodCenter(void) {
 		}
 	}
 	
-	targetSpeedX = 0;
-	
 	// Reached center
-	// Move one more cell
-	alignFrontWall(1360, 1330, 1000);
-	
-	// Update position
-	if (orientation == 'N') {
-		yPos += 1;
+	while(remainingDist > 0) {
+		remainingDist = cellCount*cellDistance - encCount;
+		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+			targetSpeedX = searchSpeed;
+		else
+			targetSpeedX = stopSpeed;
 	}
-	if (orientation == 'E') {
-		xPos += 1;
-	}
-	if (orientation == 'S') {
-		yPos -= 1;
-	}
-	if (orientation == 'W') {
-		xPos -= 1;
-	}
-		
-	useSpeedProfile = 0;
+	targetSpeedX = 0;
 	turnMotorOff;
+	useSpeedProfile = 0;
 	
-	if (DEBUG) visualizeGrid();
+	visualizeGrid();
 }
 
 
@@ -365,7 +359,8 @@ void detectWalls() {
 }
 
 bool willTurn(void) {
-	if ( (orientation == 'N' && nextMove == MOVEN) || (orientation == 'E' && nextMove == MOVEE) || (orientation == 'S' && nextMove == MOVES) || (orientation == 'W' && nextMove == MOVEW) )
+	if ( (orientation == 'N' && nextMove == MOVEN) || (orientation == 'E' && nextMove == MOVEE) || 
+		 (orientation == 'S' && nextMove == MOVES) || (orientation == 'W' && nextMove == MOVEW) )
 		return 0;
 	else return 1;
 }

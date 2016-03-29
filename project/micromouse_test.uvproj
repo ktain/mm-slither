@@ -697,6 +697,11 @@
               <FileType>5</FileType>
               <FilePath>..\user_Libraries\inc\speedProfile.h</FilePath>
             </File>
+            <File>
+              <FileName>maze.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\user_Libraries\inc\maze.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -766,6 +771,31 @@
               <FileName>speedProfile.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\speedProfile.c</FilePath>
+            </File>
+            <File>
+              <FileName>floodCenter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\floodCenter.c</FilePath>
+            </File>
+            <File>
+              <FileName>move.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\move.c</FilePath>
+            </File>
+            <File>
+              <FileName>lookup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\lookup.c</FilePath>
+            </File>
+            <File>
+              <FileName>graphics.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\graphics.c</FilePath>
+            </File>
+            <File>
+              <FileName>initializeGrid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\initializeGrid.c</FilePath>
             </File>
           </Files>
         </Group>
