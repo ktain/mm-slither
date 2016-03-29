@@ -413,7 +413,17 @@ void closeUntracedCells(void) {
 	for (j = 0; j < SIZE; j++) {
 		for (k = 0; k < SIZE; k++) {
 			if (!hasTrace(block[j][k]))
+      {
 				block[j][k] |= 15;
+        if(j < SIZE - 1)
+          block[j+1][k] |= 4;
+        if(j > 0)
+          block[j-1][k] |= 1;
+        if(k < SIZE - 1)
+          block[j][k+1] |= 8;
+        if(k > 0)
+          block[j][k-1] |= 2;
+      }
 		}
 	}
 }
