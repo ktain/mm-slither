@@ -224,7 +224,7 @@ void floodCenter(void) {
 			
 			// If has front wall, align with front wall
 			if (hasFrontWall) {
-				alignFrontWall(1360, 1330, alignTime);	// left, right, duration
+				alignFrontWall(LFvalue1, RFvalue1, alignTime);	// left, right, duration
 			}
 			
 			// Reached full cell, perform next move
@@ -253,6 +253,7 @@ void floodCenter(void) {
 	}
 	
 	// Finish moving across last cell
+	useIRSensors = 0;
 	while(remainingDist > 0) {
 		remainingDist = cellCount*cellDistance - encCount;
 		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)

@@ -31,7 +31,7 @@ int encResolution = 2048;				// counts/mrev
 int gearRatio = 5;							// 5:1
 float wheelCircumference = 70.5 ;	// mm
 float wheelBase = 68;						// mm
-int cellDistance = 25600;				// 12.5 * encResolution
+int cellDistance = 25600;				// 12.5 * encResolution = 25600
 
 
 /* Configure speed profile options */
@@ -54,7 +54,7 @@ bool isSearching = 0;
 bool isSpeedRunning = 0;
 
 // Sensor Thresholds
-int frontWallThresholdL = 30;
+int frontWallThresholdL = 30;		// to detect presence of a wall
 int frontWallThresholdR = 30;
 int leftWallThreshold = 300;
 int rightWallThreshold = 300;
@@ -63,8 +63,8 @@ int RDMiddleValue = 560;
 
 
 // Sensor Thresholds
-int LFvalue1 = 1000;
-int RFvalue1 = 1000;
+int LFvalue1 = 1600;		// for front wall alignment, when mouse is at the center
+int RFvalue1 = 1430;
 int LFvalue2 = 500;
 int RFvalue2 = 500;
 
@@ -188,21 +188,27 @@ int main(void) {
 	turnRight180 = 160;
 	*/
 	
-	// Speed profile 12v 512 2
-	maxPwm = 500;
+	// Speed/turn/sensor profile 12v 512 2
+	maxPwm = 900;
 	alignPwm = 200;
 	moveSpeed = 70*2;			// speed is in cm/s, double of actual speed
 	maxSpeed = 200*2;			// call speed_to_counts(maxSpeed)
 	turnSpeed = 40*2;		
 	searchSpeed = 70*2;
 	stopSpeed = 30*2;
-	alignTime = 200;
+	alignTime = 100;
 	turnDelay = 50;
 	
 	turnLeft90 = -70;
 	turnRight90 = 70;
-	turnLeft180 = -160;
-	turnRight180 = 160;
+	turnLeft180 = -158;
+	turnRight180 = 158;
+	
+	// Sensor Thresholds
+	LFvalue1 = 1600;		// for front wall alignment, when mouse is at the center
+	RFvalue1 = 1430;
+	LFvalue2 = 500;
+	RFvalue2 = 500;
 	
 	while(1) {		
 		delay_ms(10);
@@ -231,6 +237,7 @@ void button1_interrupt(void) {
 	delay_ms(1000);	
 	printf("Button 1 pressed\n\r");
 	
+	cellDistance = 24000;
 	speedRun();
 }
 
@@ -241,6 +248,7 @@ void button2_interrupt(void) {
 	delay_ms(1000);
 	printf("Button 2 pressed\n\r");
 	
+	cellDistance = 25600;
 	initializeGrid();
 	printGrid();
 	floodCenter();
@@ -253,7 +261,8 @@ void button3_interrupt(void) {
 	delay_ms(1000);
 	printf("Button 3 pressed\n\r");
 
-	moveForward(10);
+	//cellDistance = 25600;	
+	//moveForward(5);
 	
 	/*
 	resetLeftEncCount();

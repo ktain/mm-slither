@@ -18,7 +18,7 @@
 
 /* Constants */
 #define SIZE 12       // size of maze
-#define MAX_DIST 500  // max distance for flood search
+#define MAX_DIST 252  // max distance for flood search
 
 /* Function declarations */
 void initializeGrid(void);

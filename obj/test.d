@@ -35,8 +35,8 @@
 ..\obj\test.o: ..\ST_Libraries\inc\stm32f4xx_wwdg.h
 ..\obj\test.o: ..\ST_Libraries\inc\misc.h
 ..\obj\test.o: ..\user_Libraries\inc\test.h
-..\obj\test.o: ..\user_Libraries\inc\delay.h
 ..\obj\test.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdbool.h
+..\obj\test.o: ..\user_Libraries\inc\delay.h
 ..\obj\test.o: ..\user_Libraries\inc\sensor_Function.h
 ..\obj\test.o: ..\user_Libraries\inc\pwm.h
 ..\obj\test.o: ..\user_Libraries\inc\led.h

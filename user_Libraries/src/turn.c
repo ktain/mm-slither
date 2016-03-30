@@ -8,6 +8,7 @@
 #include "speedProfile.h"
 
 void pivotTurn(float degrees) {
+	useIRSensors = 0;
 	int startLeftEncCount = leftEncCount;
 	int startRightEncCount = rightEncCount;
 	targetSpeedX = 0;
@@ -22,5 +23,6 @@ void pivotTurn(float degrees) {
 	targetSpeedW = 0;
   curt = millis();
 	while(millis() - curt < turnDelay);
+	useIRSensors = 1;
 
 }

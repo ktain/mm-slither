@@ -162,6 +162,8 @@ void randomMovement(void) {
 			else
 				targetSpeedX = stopSpeed;
 		}
+		else 
+			targetSpeedX = searchSpeed;
 		
 		// Reached full cell
 		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2000) || (RFSensor > 2000)) {
@@ -171,7 +173,7 @@ void randomMovement(void) {
 			
 			// If has front wall, align with front wall
 			if (hasFrontWall) {
-				alignFrontWall(1360, 1330, 100);	// left, right value
+				alignFrontWall(LFvalue1, RFvalue1, alignTime);	// left, right value
 			}
 			
 			
@@ -359,6 +361,9 @@ void speedRun(void) {
 		// Reached three quarter cell
 		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {	// run once
 			threeQuarterCellFlag = 1;
+			// Check for front wall to turn off for the remaining distance
+			if (hasFrontWallInMem())
+				useIRSensors = 0;
 		}
 		
 		
@@ -373,6 +378,8 @@ void speedRun(void) {
 			else
 				targetSpeedX = stopSpeed;
 		}
+		else 
+			targetSpeedX = maxSpeed;
 		
 		// Reached full cell
 		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2500) || (RFSensor > 2500)) {	// run once
@@ -404,6 +411,7 @@ void speedRun(void) {
 	}
 	
 	// Finish moving across last cell
+	useIRSensors = 0;
 	while(remainingDist > 0) {
 		remainingDist = cellCount*cellDistance - encCount;
 		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
@@ -437,4 +445,14 @@ void closeUntracedCells(void) {
       }
 		}
 	}
+}
+
+
+bool hasFrontWallInMem(void) {
+	int curBlock = block[yPos][xPos];
+	if ( (orientation == 'N' && hasNorth(curBlock)) || (orientation == 'E' && hasEast(curBlock)) ||
+			 (orientation == 'S' && hasSouth(curBlock)) || (orientation == 'W' && hasWest(curBlock)) )
+		return 1;
+	else
+		return 0;
 }
