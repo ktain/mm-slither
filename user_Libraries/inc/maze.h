@@ -13,8 +13,8 @@
 #define DEBUG 0
 
 /* Graphics */
-#define HIDESOUTH 1  // Hide south cell wall when printing
-#define HIDEEAST 1    // Hide east cell wall when printing
+#define HIDESOUTH 0  // Hide south cell wall when printing
+#define HIDEEAST 0    // Hide east cell wall when printing
 
 /* Constants */
 #define SIZE 12       // size of maze

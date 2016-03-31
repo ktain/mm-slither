@@ -165,19 +165,19 @@ void floodCenter(void) {
 		}
 		
 		// Reached half cell
-		if ((remainingDist <= cellDistance/2)) {		// Run for last half
+		if ((remainingDist <= cellDistance/2)) {		// Run forlast half
 			halfCellFlag = 1;
 		}
 					
-		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
-		if (hasFrontWall || willTurn()) {
-			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+			// If has front wall or needs to turn, decelerate to 0 within half a cell distance
+			if (hasFrontWall || willTurn()) {
+				if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+					targetSpeedX = searchSpeed;
+				else
+					targetSpeedX = stopSpeed;
+			}
+			else 
 				targetSpeedX = searchSpeed;
-			else
-				targetSpeedX = stopSpeed;
-		}
-		else 
-			targetSpeedX = searchSpeed;
 		
 		// Reached three quarter cell
 		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {	// run once

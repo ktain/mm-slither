@@ -120,4 +120,6 @@ extern int turnRight90;
 extern int turnLeft180;
 extern int turnRight180;
 
+extern int distances[100];
+
 #endif

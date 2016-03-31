@@ -210,48 +210,51 @@ void randomMovement(void) {
 //Returns which direction to move in and sets the orientation to next move
 int getNextDirection(void)
 {
-  int currDistance = distances[yPos][xPos];
+  int currDistance = distance[yPos][xPos];
   int distN = MAX_DIST;
   int distE = MAX_DIST;
   int distS = MAX_DIST;
   int distW = MAX_DIST;
 
   if(yPos < SIZE - 1)
-    distN = distances[yPos+1][xPos];
+    distN = distance[yPos+1][xPos];
   if(xPos < SIZE - 1)
-    distE = distances[yPos][xPos+1];
+    distE = distance[yPos][xPos+1];
   if(xPos > 0)
-    distS = distances[yPos][xPos-1];
+    distS = distance[yPos-1][xPos];
   if(yPos > 0)
-    distW = distances[yPos-1][xPos];
+    distW = distance[yPos][xPos-1];
 
   if(!hasNorth(block[yPos][xPos]) && (distN == currDistance - 1))
   {
+		printf("TURN FRONT \n\r");
     orientation = 'N';
     return MOVEN;
   }
-  if((distE == currDistance - 1) && !hasEast(block[yPos][xPos]))
+  if(!hasEast(block[yPos][xPos]) && (distE == currDistance - 1))
   {
+		printf("TURN RIGHT \n\r");
     orientation = 'E';
     return MOVEE;
   }
-  if((distS == currDistance - 1) && !hasSouth(block[yPos][xPos]))
+  if(!hasSouth(block[yPos][xPos]) && (distS == currDistance - 1))
   {
+		printf("TURN BACK \n\r");
     orientation = 'S';
     return MOVES;
   }
-  if((disW == currDistance - 1) && !hasWest(block[yPos][xPos]))
+  if(!hasWest(block[yPos][xPos]) && (distW == currDistance - 1))
   {
+		printf("TURN LEFT\n\r");
     orientation = 'W';
     return MOVEW;
   }
+	printf("got here \n\r");
   return 0;
 }
 
 void speedRun(void) 
 {
-  int distances[100] = {0};
-
   int directions[100] = {0};
   //assume initial direction is north
   directions[0] = MOVEN;
@@ -261,51 +264,65 @@ void speedRun(void)
   xPos = 0;
   yPos = 0;
 	orientation = 'N';
- 
-  int distFront = 0;
+
+ 	resetLeftEncCount();
+	resetRightEncCount();
 
 	// Close off untraced routes
 	closeUntracedCells();
+  updateDistance();
+  visualizeGrid();
 	
   int length = 0;
-  int nextTurn = 0;
-
+ 
   while(!atCenter())
   {
+		printf("loop\n\r");
     if(!hasNorth(block[yPos][xPos]) && orientation == 'N')
     {
+			printf("Moving north\n\r");
       length++;
       yPos++;
     }
     else if(!hasEast(block[yPos][xPos]) && orientation == 'E')
     {
+			printf("Moving east\n\r");
       length++;
       xPos++;
     }
     else if(!hasSouth(block[yPos][xPos]) && orientation == 'S')
     {
+			printf("Moving south\n\r");
       length++;
       yPos--;
     }
     else if(!hasWest(block[yPos][xPos]) && orientation == 'W')
     {
+			printf("Moving west\n\r");
       length++;
       xPos--;
     }
     else
     {
+			printf("else storing distance\n\r");
       distances[index] = length;
       length = 0;
       index++;
       directions[index] = getNextDirection();
     }
   }
-
+	printf("finished\n\r");
+	printf("Index %d\n\r",index);
+	
   index = 0;
   while(distances[index] != 0)
   {
+		printf("distance to move: %d \n\r", distances[index]);
+		printf("direction to move in: %d \n\r", directions[index]);
     if (directions[index] == MOVEN) {
+			printf("beforeMoveN\n\r");
       moveN();
+			printf("afterMoveN\n\r");
     }
     else if (directions[index] == MOVEE) {
       moveE();
@@ -316,9 +333,11 @@ void speedRun(void)
     else if (directions[index] == MOVEW) {
       moveW();
     }
+		printf("move forward\n\r");
     moveForward(distances[index]);
     index++;
   }
+	printf("done\n\r");
 
 }
 
