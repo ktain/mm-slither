@@ -54,8 +54,8 @@ bool isSearching = 0;
 bool isSpeedRunning = 0;
 
 // Sensor Thresholds
-int frontWallThresholdL = 30;		// to detect presence of a wall
-int frontWallThresholdR = 30;
+int frontWallThresholdL = 15;		// to detect presence of a wall
+int frontWallThresholdR = 15;
 int leftWallThreshold = 300;
 int rightWallThreshold = 300;
 int LDMiddleValue = 780;
@@ -192,7 +192,7 @@ int main(void) {
 	maxPwm = 900;
 	alignPwm = 200;
 	moveSpeed = 70*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 200*2;			// call speed_to_counts(maxSpeed)
+	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
 	turnSpeed = 40*2;		
 	searchSpeed = 70*2;
 	stopSpeed = 30*2;
@@ -237,7 +237,7 @@ void button1_interrupt(void) {
 	delay_ms(1000);	
 	printf("Button 1 pressed\n\r");
 	
-	cellDistance = 24000;
+	cellDistance = 24600;
 	speedRun();
 }
 
@@ -261,6 +261,7 @@ void button3_interrupt(void) {
 	delay_ms(1000);
 	printf("Button 3 pressed\n\r");
 
+	
 	//cellDistance = 25600;	
 	//moveForward(5);
 	

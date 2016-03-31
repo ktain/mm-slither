@@ -104,6 +104,16 @@ void randomMovement(void) {
 			useIRSensors = 1;
 			useGyro = 0;
 			useSpeedProfile = 1;
+			
+		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
+		if (hasFrontWall || nextMove == TURNLEFT || nextMove == TURNRIGHT || nextMove == TURNBACK) {
+			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+				targetSpeedX = searchSpeed;
+			else
+				targetSpeedX = stopSpeed;
+		}
+		else 
+			targetSpeedX = searchSpeed;
 		}
 		
 		// Reached quarter cell
@@ -119,7 +129,7 @@ void randomMovement(void) {
 		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
 			halfCellFlag = 1;
 			// Read wall and set wall flags
-			if ((LFSensor > frontWallThresholdL) && (RFSensor > frontWallThresholdR))
+			if ((LFSensor > frontWallThresholdL) || (RFSensor > frontWallThresholdR))
 				hasFrontWall = 1;
 			if (LDSensor > leftWallThreshold)
 				hasLeftWall = 1;
@@ -154,16 +164,6 @@ void randomMovement(void) {
 			if (hasFrontWall)
 				useIRSensors = 0;
 		}
-		
-		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
-		if (hasFrontWall || nextMove == TURNLEFT || nextMove == TURNRIGHT || nextMove == TURNBACK) {
-			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
-				targetSpeedX = searchSpeed;
-			else
-				targetSpeedX = stopSpeed;
-		}
-		else 
-			targetSpeedX = searchSpeed;
 		
 		// Reached full cell
 		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2000) || (RFSensor > 2000)) {

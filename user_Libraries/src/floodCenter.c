@@ -81,15 +81,7 @@ void floodCenter(void) {
 		// Reached quarter cell
 		if (!quarterCellFlag && (remainingDist <= cellDistance*3/4))	{	// run once
 			quarterCellFlag = 1;
-		}
-		
-		if (quarterCellFlag && !threeQuarterCellFlag)	// middle half
-			useIRSensors = 1;
-		
-		
-		// Reached half cell
-		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
-			halfCellFlag = 1;
+			
 			// Read wall and set wall flags
 			if ((LFSensor > frontWallThresholdL) && (RFSensor > frontWallThresholdR))
 				hasFrontWall = 1;
@@ -161,31 +153,31 @@ void floodCenter(void) {
 				}
 			}
 			
-			if (DEBUG) printf("Placing pseudo walls\n\r");
-			
-			// Isolate known dead ends with pseudo walls
-			for (int i = SIZE*SIZE; i >= 0; i--) {
-				for (int j = 0; j < SIZE; j++) {
-					for (int k = 0; k < SIZE; k++) {
-						if ( !((j == 0) && (k == 0)))
-							// If dead end, isolate block
-							if ((hasNorth(block[j][k]) + hasEast(block[j][k]) +
-									hasSouth(block[j][k]) + hasWest(block[j][k])) >= 3) {
-								block[j][k] |= 32;
-								block[j][k] |= 15;
-								if (j < SIZE - 1)  // Update adjacent wall
-									block[j + 1][k] |= 4;
-								if (k < SIZE - 1)  // Update adjacent wall
-									block[j][k + 1] |= 8;
-								if (j > 0)         // Update adjacent wall
-									block[j - 1][k]  |= 1;
-								if (k > 0)         // Update adjacent wall
-									block[j][k - 1] |= 2;
-							}
-					}
-				}
-			}
 		}
+		
+		if (quarterCellFlag && !threeQuarterCellFlag)	// Run for middle half
+			useIRSensors = 1;
+		
+		
+		// Reached half cell
+		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
+			halfCellFlag = 1;
+		}
+		
+		// Reached half cell
+		if ((remainingDist <= cellDistance/2)) {		// Run for last half
+			halfCellFlag = 1;
+		}
+					
+		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
+		if (hasFrontWall || willTurn()) {
+			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+				targetSpeedX = searchSpeed;
+			else
+				targetSpeedX = stopSpeed;
+		}
+		else 
+			targetSpeedX = searchSpeed;
 		
 		// Reached three quarter cell
 		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {	// run once
@@ -198,16 +190,6 @@ void floodCenter(void) {
 			if (hasFrontWall)
 				useIRSensors = 0;
 		}
-		
-		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
-		if (hasFrontWall || willTurn()) {
-			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
-				targetSpeedX = searchSpeed;
-			else
-				targetSpeedX = stopSpeed;
-		}
-		else 
-			targetSpeedX = searchSpeed;
 		
 		// Reached full cell
 		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2500) || (RFSensor > 2500)) {	// run once
@@ -271,6 +253,31 @@ void floodCenter(void) {
 	targetSpeedX = 0;
 	turnMotorOff;
 	useSpeedProfile = 0;
+			
+	// Isolate known dead ends with pseudo walls
+	if (DEBUG) 
+		printf("Placing pseudo walls\n\r");
+	for (int i = SIZE*SIZE; i >= 0; i--) {
+		for (int j = 0; j < SIZE; j++) {
+			for (int k = 0; k < SIZE; k++) {
+				if ( !((j == 0) && (k == 0)))
+					// If dead end, isolate block
+					if ((hasNorth(block[j][k]) + hasEast(block[j][k]) +
+							hasSouth(block[j][k]) + hasWest(block[j][k])) >= 3) {
+						block[j][k] |= 32;
+						block[j][k] |= 15;
+						if (j < SIZE - 1)  // Update adjacent wall
+							block[j + 1][k] |= 4;
+						if (k < SIZE - 1)  // Update adjacent wall
+							block[j][k + 1] |= 8;
+						if (j > 0)         // Update adjacent wall
+							block[j - 1][k]  |= 1;
+						if (k > 0)         // Update adjacent wall
+							block[j][k - 1] |= 2;
+					}
+			}
+		}
+	}
 	
 	visualizeGrid();
 }
