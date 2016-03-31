@@ -209,6 +209,94 @@ void randomMovement(void) {
 }
 
 void speedRun(void) {
+  int distances[100] = {0};
+  int index = 0;
+  unsigned char directions[100] = {0};
+  xPos = 0;
+  yPos = 0;
+	orientation = 'N';
+ 
+  int distFront = 0;
+
+	// Close off untraced routes
+	closeUntracedCells();
+	
+  int length = 0;
+  int nextTurn = 0;
+  while(!atCenter())
+  {
+    if(!hasNorth(block[yPos][xPos]) && orientation == 'N')
+    {
+      length++;
+      yPos++;
+    }
+    else
+    {
+      distances[index] = length;
+      directions[index] = MOVEN;
+      length = 0;
+      index++;
+    }
+    if(!hasEast(block[yPos][xPos]) && orientation == 'E')
+    {
+      length++;
+      xPos++;
+    }
+    else
+    {
+      distances[index] = length;
+      directions[index] = MOVEE;
+      length = 0;
+      index++;
+    }
+    if(!hasSouth(block[yPos][xPos]) && orientation == 'S')
+    {
+      length++;
+      yPos--;
+    }
+    else
+    {
+      distances[index] = length;
+      directions[index] = MOVES;
+      length = 0;
+      index++;
+    }
+    if(!hasWest(block[yPos][xPos]) && orientation == 'W')
+    {
+      length++;
+      xPos--;
+    }
+    else
+    {
+      distances[index] = length;
+      directions[index] = MOVEW;
+      length = 0;
+      index++;
+    }
+  }
+
+  index = 0;
+  while(distances[index] != 0)
+  {
+    if (directions[index] == MOVEN) {
+      moveN();
+    }
+    else if (directions[index] == MOVEE) {
+      moveE();
+    }
+    else if (directions[index] == MOVES) {
+      moveS();
+    }
+    else if (directions[index] == MOVEW) {
+      moveW();
+    }
+    moveForward(distances[index]);
+    index++;
+  }
+
+}
+
+void speedRunOld(void) {
 	resetSpeedProfile();
 	
 	useIRSensors = 1;

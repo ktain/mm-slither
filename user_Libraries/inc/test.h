@@ -9,6 +9,7 @@ void ledTest(void);
 int wheelOffsetTest(int speed, int ontime);
 void randomMovement(void);
 void speedRun(void);
+void speedRunOld(void);
 void closeUntracedCells(void);
 bool hasFrontWallInMem(void);
 #endif
