@@ -225,24 +225,24 @@ int getNextDirection(void)
   if(yPos > 0)
     distW = distances[yPos-1][xPos];
 
-  if(!hasNorth(block[yPos][xPos]) && orientation == 'N' && (distN == currDistance - 1))
+  if(!hasNorth(block[yPos][xPos]) && (distN == currDistance - 1))
   {
     orientation = 'N';
     return MOVEN;
   }
-  if((distRight == currDistance - 1) && !hasEast(block[yPos][xPos]))
+  if((distE == currDistance - 1) && !hasEast(block[yPos][xPos]))
   {
     orientation = 'E';
     return MOVEE;
   }
-  if((distRight == currDistance - 1) && !hasSouth(block[yPos][xPos]))
+  if((distS == currDistance - 1) && !hasSouth(block[yPos][xPos]))
   {
-    orientation = 'E';
-    return MOVEE;
+    orientation = 'S';
+    return MOVES;
   }
-  if((distRight == currDistance - 1) && !hasWest(block[yPos][xPos]))
+  if((disW == currDistance - 1) && !hasWest(block[yPos][xPos]))
   {
-    orientation = 'E';
+    orientation = 'W';
     return MOVEW;
   }
   return 0;
