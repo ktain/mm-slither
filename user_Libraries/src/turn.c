@@ -6,8 +6,12 @@
 #include "stm32f4xx.h"
 #include "encoder.h"
 #include "speedProfile.h"
+#include "maze.h"
+#include <stdio.h>
 
 void pivotTurn(float degrees) {
+	
+	if(DEBUG) printf("Pivot turning %f degrees\n\r", degrees);
 	useIRSensors = 0;
 	int startLeftEncCount = leftEncCount;
 	int startRightEncCount = rightEncCount;
@@ -24,5 +28,4 @@ void pivotTurn(float degrees) {
   curt = millis();
 	while(millis() - curt < turnDelay);
 	useIRSensors = 1;
-
 }

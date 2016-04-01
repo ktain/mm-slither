@@ -74,20 +74,18 @@ int	turnRight90;
 int	turnLeft180;
 int	turnRight180;
 
+int distances[100] = {0};
 
 void systick(void) {
 	
 	// check voltage
-	lowBatCheck();	// stall if < 7.00V
+	lowBatCheck();	// check if < 7.00V
 	
 	if (isSearching) {
 		// Collect data
 		if(useIRSensors)
 			readSensor();
-
-		if(useGyro)
-			readGyro();
-
+		
 		// Run speed profile (with PID)
 		if(useSpeedProfile) {
 			speedProfile();
@@ -124,54 +122,7 @@ int main(void) {
 	shortBeep(200, 1000);	// ms, frequency
 	
 	isWaiting = 1;
-	
-	/*
-	// Speed profile 2
-	maxPwm = 400;
-	alignPwm = 80;
-	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
-	turnSpeed = 20*2;		
-	searchSpeed = 40*2;
-	stopSpeed = 5*2;
 
-	turnLeft90 = -81;
-	turnRight90 = 82;
-	turnLeft180 = -170;
-	turnRight180 = 170;
-	*/
-	
-	/* Speed profile 3
-	maxPwm = 400;
-	alignPwm = 80;
-	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
-	turnSpeed = 30*2;		
-	searchSpeed = 40*2;
-	stopSpeed = 5*2;
-	
-	turnLeft90 = -70;
-	turnRight90 = 70;
-	turnLeft180 = -160;
-	turnRight180 = 160;
-	*/
-	
-	/*
-	// Speed profile 4
-	maxPwm = 400;
-	alignPwm = 60;
-	moveSpeed = 30*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
-	turnSpeed = 40*2;		
-	searchSpeed = 40*2;
-	stopSpeed = 5*2;
-	
-	turnLeft90 = -52;
-	turnRight90 = 52;
-	turnLeft180 = -145;
-	turnRight180 = 145;
-	*/
-	
 	// Speed profile 12v 512 1
 	/*
 	maxPwm = 900;
@@ -207,6 +158,7 @@ int main(void) {
 	// Sensor Thresholds
 	LFvalue1 = 1600;		// for front wall alignment, when mouse is at the center
 	RFvalue1 = 1430;
+	
 	LFvalue2 = 500;
 	RFvalue2 = 500;
 	
@@ -221,6 +173,22 @@ void button0_interrupt(void) {
 	delay_ms(1000);
 	printf("Button 0 pressed\n\r");
 	
+	printf("Move Foward 2\n\r");
+	moveForward(1);
+	
+	delay_ms(1000);
+	
+	printf("Move S\n\r");
+	
+	isSpeedRunning = 1;
+	useSpeedProfile = 1;
+	moveS();
+	
+	delay_ms(1000);
+	
+	printf("Move Forward 2\n\r");
+	moveForward(1);
+	/*
 	angle = 0;
 	while(1) {
 		readSensor();
@@ -228,6 +196,8 @@ void button0_interrupt(void) {
 		printInfo();				
 		delay_ms(2);
 	}
+	*/
+	//speedRun();
 }
 
 
@@ -238,7 +208,7 @@ void button1_interrupt(void) {
 	printf("Button 1 pressed\n\r");
 	
 	cellDistance = 24600;
-	speedRun();
+	speedRunOld();
 }
 
 

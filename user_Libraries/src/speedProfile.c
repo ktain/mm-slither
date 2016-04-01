@@ -276,10 +276,9 @@ void moveForward(int cells) {
 			targetSpeedX = moveSpeed;
 	}
 	targetSpeedX = 0;
-	//turnMotorOff;
-	oldEncCount = encCount;
+	turnMotorOff;
 	
-	//useSpeedProfile = 0;
+	useSpeedProfile = 0;
 	isSpeedRunning = 0;
 }
 

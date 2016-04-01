@@ -167,19 +167,11 @@ void lowBatCheck(void)
 	// Low battery threshold of 7.00V
   if(voltage < 7000)
 	{	
-		
-		// Stop motors
-		turnMotorOff;
-		
-		// Turn off all LEDs and emitters
+		// Turn on all LEDs
 		ALL_LED_ON;
-		ALL_EM_OFF;
 		
 		// Keep buzzer on
-		while(1)
-		{
-			shortBeep(200, 1000); //1kHz tone
-		}
+		shortBeep(200, 1000); //1kHz tone
 	}
 }
 
