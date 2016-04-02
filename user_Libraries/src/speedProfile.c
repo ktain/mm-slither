@@ -33,8 +33,8 @@ float kpW1 = 1;						//used for T1 and T3 in curve turn, default 1
 float kdW1 = 26;
 float kpW2 = 1;						//used for T2 in curve turn
 float kdW2 = 36;
-float accX = 70;					// acc/dec in cm/s/s
-float decX = 600; 				// default 600 = 6m/s/s  
+float accX = 60;					// acc/dec in cm/s/s
+float decX = 200; 				// default 600 = 6m/s/s  
 float accW = 1; 					// cm/s^2
 float decW = 1;	
 
@@ -262,15 +262,16 @@ void moveForward(int cells) {
 	isSearching = 0;
 	isSpeedRunning = 1;
 	
-	int	remainingDist = cells*cellDistance;
+	distanceLeft = cells*cellDistances[cells];
 	
 	targetSpeedX = maxSpeed;
 	
-	while( (encCount - oldEncCount) < cells*cellDistance ) {
-		remainingDist = cells*cellDistance - encCount;
-		if(remainingDist < cellDistance/2)
+	while( (encCount - oldEncCount) < cells*cellDistances[cells] ) {
+		
+		//distanceLeft = cells*cellDistances[cells] - encCount;
+		if(distanceLeft < cellDistance/3)
 			useIRSensors = 0;
-		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(moveSpeed)) < decX)
+		if(needToDecelerate(distanceLeft, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(moveSpeed)) < decX)
 			targetSpeedX = maxSpeed;
 		else
 			targetSpeedX = moveSpeed;

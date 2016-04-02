@@ -255,6 +255,7 @@ int getNextDirection(void)
 
 void speedRun(void) 
 {
+	int currDistance = distance[yPos][xPos];
   int directions[100] = {0};
   //assume initial direction is north
   directions[0] = MOVEN;
@@ -271,32 +272,49 @@ void speedRun(void)
 	// Close off untraced routes
 	closeUntracedCells();
   updateDistance();
+
+  int distN = MAX_DIST;
+  int distE = MAX_DIST;
+  int distS = MAX_DIST;
+  int distW = MAX_DIST;
+
+  
   visualizeGrid();
 	
   int length = 0;
  
   while(!atCenter())
   {
+		currDistance = distance[yPos][xPos];
+		if(yPos < SIZE - 1)
+			distN = distance[yPos+1][xPos];
+		if(xPos < SIZE - 1)
+			distE = distance[yPos][xPos+1];
+		if(xPos > 0)
+			distS = distance[yPos-1][xPos];
+		if(yPos > 0)
+			distW = distance[yPos][xPos-1];
+ 
 		printf("loop\n\r");
-    if(!hasNorth(block[yPos][xPos]) && orientation == 'N')
+    if(!hasNorth(block[yPos][xPos]) && orientation == 'N' && (distN == currDistance - 1))
     {
 			printf("Moving north\n\r");
       length++;
       yPos++;
     }
-    else if(!hasEast(block[yPos][xPos]) && orientation == 'E')
+    else if(!hasEast(block[yPos][xPos]) && orientation == 'E' && (distE == currDistance -1))
     {
 			printf("Moving east\n\r");
       length++;
       xPos++;
     }
-    else if(!hasSouth(block[yPos][xPos]) && orientation == 'S')
+    else if(!hasSouth(block[yPos][xPos]) && orientation == 'S' && (distS == currDistance -1))
     {
 			printf("Moving south\n\r");
       length++;
       yPos--;
     }
-    else if(!hasWest(block[yPos][xPos]) && orientation == 'W')
+    else if(!hasWest(block[yPos][xPos]) && orientation == 'W' && (distW == currDistance -1 ))
     {
 			printf("Moving west\n\r");
       length++;
@@ -311,26 +329,43 @@ void speedRun(void)
       directions[index] = getNextDirection();
     }
   }
+	distances[index] = length;
+	for(int i = 0; i < 7; i++)
+		printf("Index: %d Dist: %d Direction: %d \n\r", i, distances[i], directions[i]);
 	printf("finished\n\r");
 	printf("Index %d\n\r",index);
 	
   index = 0;
-  while(distances[index] != 0)
+	int flag = 0;
+  while(distances[index] != 0 && !flag)
   {
+		if(distances[index] == 0)
+			flag = 1;
+		printf("index : %d \n\r", index);
 		printf("distance to move: %d \n\r", distances[index]);
 		printf("direction to move in: %d \n\r", directions[index]);
     if (directions[index] == MOVEN) {
-			printf("beforeMoveN\n\r");
+			resetSpeedProfile();
+			isSpeedRunning = 1;
+			useSpeedProfile = 1;
       moveN();
-			printf("afterMoveN\n\r");
     }
     else if (directions[index] == MOVEE) {
+			resetSpeedProfile();
+			isSpeedRunning = 1;
+			useSpeedProfile = 1;
       moveE();
     }
     else if (directions[index] == MOVES) {
+			resetSpeedProfile();
+			isSpeedRunning = 1;
+			useSpeedProfile = 1;
       moveS();
     }
     else if (directions[index] == MOVEW) {
+			resetSpeedProfile();
+			isSpeedRunning = 1;
+			useSpeedProfile = 1;
       moveW();
     }
 		printf("move forward\n\r");

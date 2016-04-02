@@ -80,7 +80,7 @@ void visualizeGrid() {
       else if ( isDeadEnd(block[i][j]) )
         printf(" x ");
       else if ( hasTrace(block[i][j]) ) {
-        printf(" . ");
+        printf(".%02d", distance[i][j]);
       }
       else {
         printf("%3d", distance[i][j]);

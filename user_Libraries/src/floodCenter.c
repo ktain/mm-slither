@@ -82,14 +82,20 @@ void floodCenter(void) {
 		if (!quarterCellFlag && (remainingDist <= cellDistance*3/4))	{	// run once
 			quarterCellFlag = 1;
 			
-			// Read wall and set wall flags
-			if ((LFSensor > frontWallThresholdL) && (RFSensor > frontWallThresholdR))
-				hasFrontWall = 1;
+			// Detect left and right wall
 			if (LDSensor > leftWallThreshold)
 				hasLeftWall = 1;
 			if (RDSensor > rightWallThreshold)
-				hasRightWall = 1;
+				hasRightWall = 1;		
+		}
+		
+		// Reached half cell
+		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
+			halfCellFlag = 1;
 			
+			// Detect front wall
+			if ((LFSensor > frontWallThresholdL) || (RFSensor > frontWallThresholdR))
+				hasFrontWall = 1;
 		
 			// Store next cell's wall data
 			if (DEBUG) printf("Detecting walls\n\r");
@@ -152,20 +158,10 @@ void floodCenter(void) {
 					while(1);
 				}
 			}
-			
-		}
-		
-		if (quarterCellFlag && !threeQuarterCellFlag)	// Run for middle half
-			useIRSensors = 1;
-		
-		
-		// Reached half cell
-		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
-			halfCellFlag = 1;
 		}
 		
 		// Reached half cell
-		if ((remainingDist <= cellDistance/2)) {		// Run forlast half
+		if ((remainingDist <= cellDistance/2)) {		// Run for last half
 			halfCellFlag = 1;
 		}
 					
@@ -197,6 +193,8 @@ void floodCenter(void) {
 			fullCellFlag = 1;
 			cellCount++;
 			shortBeep(200, 1000);
+			
+			turnMotorOff;
 			
 			// Place trace
 			if (!hasTrace(block[yPos][xPos])) {
@@ -235,8 +233,9 @@ void floodCenter(void) {
 	}
 	
 	// Finish moving across last cell
-	useIRSensors = 0;
 	while(remainingDist > 0) {
+		if (remainingDist < cellDistance/2)
+			useIRSensors = 0;
 		remainingDist = cellCount*cellDistance - encCount;
 		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
 			targetSpeedX = searchSpeed;
@@ -254,13 +253,21 @@ void floodCenter(void) {
 	turnMotorOff;
 	useSpeedProfile = 0;
 			
-	// Isolate known dead ends with pseudo walls
+  isolateDeadEnds();
+	
+	visualizeGrid();
+}
+
+void isolateDeadEnds(void)
+{
+   // Isolate known dead ends with pseudo walls
 	if (DEBUG) 
 		printf("Placing pseudo walls\n\r");
 	for (int i = SIZE*SIZE; i >= 0; i--) {
 		for (int j = 0; j < SIZE; j++) {
 			for (int k = 0; k < SIZE; k++) {
-				if ( !((j == 0) && (k == 0)))
+				
+				if ( !((j == 0) && (k == 0))) {
 					// If dead end, isolate block
 					if ((hasNorth(block[j][k]) + hasEast(block[j][k]) +
 							hasSouth(block[j][k]) + hasWest(block[j][k])) >= 3) {
@@ -275,13 +282,12 @@ void floodCenter(void) {
 						if (k > 0)         // Update adjacent wall
 							block[j][k - 1] |= 2;
 					}
+				}
 			}
 		}
 	}
 	
-	visualizeGrid();
 }
-
 
 
 // Update distances for every other block while flooding the center

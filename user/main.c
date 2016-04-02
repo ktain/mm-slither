@@ -32,6 +32,7 @@ int gearRatio = 5;							// 5:1
 float wheelCircumference = 70.5 ;	// mm
 float wheelBase = 68;						// mm
 int cellDistance = 25600;				// 12.5 * encResolution = 25600
+int cellDistances[16];
 
 
 /* Configure speed profile options */
@@ -54,10 +55,10 @@ bool isSearching = 0;
 bool isSpeedRunning = 0;
 
 // Sensor Thresholds
-int frontWallThresholdL = 15;		// to detect presence of a wall
-int frontWallThresholdR = 15;
-int leftWallThreshold = 300;
-int rightWallThreshold = 300;
+int frontWallThresholdL = 30;		// to detect presence of a wall
+int frontWallThresholdR = 30;
+int leftWallThreshold = 350;
+int rightWallThreshold = 350;
 int LDMiddleValue = 780;
 int RDMiddleValue = 560;
 
@@ -142,13 +143,13 @@ int main(void) {
 	// Speed/turn/sensor profile 12v 512 2
 	maxPwm = 900;
 	alignPwm = 200;
-	moveSpeed = 70*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
+	moveSpeed = 150*2;			// speed is in cm/s, double of actual speed
+	maxSpeed = 200*2;			// call speed_to_counts(maxSpeed)
 	turnSpeed = 40*2;		
-	searchSpeed = 70*2;
+	searchSpeed = 60*2;
 	stopSpeed = 30*2;
 	alignTime = 100;
-	turnDelay = 50;
+	turnDelay = 100;
 	
 	turnLeft90 = -70;
 	turnRight90 = 70;
@@ -162,6 +163,24 @@ int main(void) {
 	LFvalue2 = 500;
 	RFvalue2 = 500;
 	
+	// Cell encoder distances
+	cellDistances[0] = 0;
+	cellDistances[1] = 18000;
+	cellDistances[2] = 21000;
+	cellDistances[3] = 23000;
+	cellDistances[4] = 23500;
+	cellDistances[5] = 24000;
+	cellDistances[6] = 25600;
+	cellDistances[7] = 25600;
+	cellDistances[8] = 25600;
+	cellDistances[9] = 25600;
+	cellDistances[10] = 25600;
+	cellDistances[11] = 25600;
+	cellDistances[12] = 25600;
+	cellDistances[13] = 25600;
+	cellDistances[14] = 25600;
+	cellDistances[15] = 25600;
+	
 	while(1) {		
 		delay_ms(10);
 	}
@@ -172,22 +191,6 @@ void button0_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);
 	printf("Button 0 pressed\n\r");
-	
-	printf("Move Foward 2\n\r");
-	moveForward(1);
-	
-	delay_ms(1000);
-	
-	printf("Move S\n\r");
-	
-	isSpeedRunning = 1;
-	useSpeedProfile = 1;
-	moveS();
-	
-	delay_ms(1000);
-	
-	printf("Move Forward 2\n\r");
-	moveForward(1);
 	/*
 	angle = 0;
 	while(1) {
@@ -197,7 +200,18 @@ void button0_interrupt(void) {
 		delay_ms(2);
 	}
 	*/
-	//speedRun();
+	speedRun();
+	
+	/*
+	moveForward(1);
+	delay_ms(1000);
+	resetSpeedProfile();
+	isSpeedRunning = 1;
+	useSpeedProfile = 1;
+	pivotTurn(turnRight90);
+	delay_ms(1000);
+	moveForward(1);
+	*/
 }
 
 

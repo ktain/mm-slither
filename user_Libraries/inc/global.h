@@ -27,6 +27,7 @@ extern int maxPwm;
 extern int alignPwm;
 extern int alignTime;
 extern int turnDelay;
+extern int cellDistances[16];
 
 // Speed profile options
 extern bool useIRSensors;
