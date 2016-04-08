@@ -21,10 +21,6 @@
 void floodCenter(void) {
 	resetSpeedProfile();
 	
-	isWaiting = 0;
-	isSearching = 1;
-	isSpeedRunning = 0;
-	
 	int cellCount = 1;						// number of explored cells
 	int remainingDist = 0;				// positional distance
 	bool beginCellFlag = 0;
@@ -43,8 +39,6 @@ void floodCenter(void) {
 	yPos = 0;
 	orientation = 'N';
 	
-	resetSpeedProfile();
-	
 	// Place trace at starting position
   if (!hasTrace(block[yPos][xPos])) {
     block[yPos][xPos] |= 16;
@@ -60,7 +54,6 @@ void floodCenter(void) {
 		if (!beginCellFlag && (remainingDist <= cellDistance))	{	// run once
 			beginCellFlag = 1;
 			useIRSensors = 1;
-			useGyro = 0;
 			useSpeedProfile = 1;
 			
 			// Update position
@@ -167,10 +160,13 @@ void floodCenter(void) {
 					
 			// If has front wall or needs to turn, decelerate to 0 within half a cell distance
 			if (hasFrontWall || willTurn()) {
-				if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+				if(getDecNeeded(counts_to_mm(remainingDist), curSpeedX, stopSpeed) < decX) {
 					targetSpeedX = searchSpeed;
-				else
+				}
+				else {
+					//printf("slow down\n\r");
 					targetSpeedX = stopSpeed;
+				}
 			}
 			else 
 				targetSpeedX = searchSpeed;
@@ -194,7 +190,7 @@ void floodCenter(void) {
 			cellCount++;
 			shortBeep(200, 1000);
 			
-			turnMotorOff;
+			targetSpeedX = 0;
 			
 			// Place trace
 			if (!hasTrace(block[yPos][xPos])) {
@@ -206,6 +202,8 @@ void floodCenter(void) {
 			if (hasFrontWall) {
 				alignFrontWall(LFvalue1, RFvalue1, alignTime);	// left, right, duration
 			}
+			
+			
 			
 			// Reached full cell, perform next move
 			if (nextMove == MOVEN) {
@@ -237,10 +235,12 @@ void floodCenter(void) {
 		if (remainingDist < cellDistance/2)
 			useIRSensors = 0;
 		remainingDist = cellCount*cellDistance - encCount;
-		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+		if(getDecNeeded(counts_to_mm(remainingDist), curSpeedX, stopSpeed) < decX) {
 			targetSpeedX = searchSpeed;
-		else
+		}
+		else {
 			targetSpeedX = stopSpeed;
+		}
 	}
 	
 	// Place trace

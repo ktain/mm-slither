@@ -43,7 +43,7 @@
 ### ADS-LD Output File: '..\obj\micromouse_test.axf'
 ### ADS-LD Command File: '..\obj\micromouse_test.lnp'
 ### Checking for dirty Components...
-### Creating CmdFile '..\obj\micromouse_test.lnp', Handle=0x00000884
+### Creating CmdFile '..\obj\micromouse_test.lnp', Handle=0x00000294
 ### Writing '.lnp' file
 ### ADS-LD Command file '..\obj\micromouse_test.lnp' is ready.
 ### ADS-LD: About to start ADS-LD Thread.

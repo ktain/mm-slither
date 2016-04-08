@@ -40,3 +40,4 @@
 ..\obj\align.o: ..\ST_Libraries\inc\stm32f4xx_wwdg.h
 ..\obj\align.o: ..\ST_Libraries\inc\misc.h
 ..\obj\align.o: ..\user_Libraries\inc\encoder.h
+..\obj\align.o: ..\user_Libraries\inc\sensor_Function.h

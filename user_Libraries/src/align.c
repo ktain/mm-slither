@@ -4,14 +4,15 @@
 #include "global.h"
 #include "delay.h"
 #include "encoder.h"
+#include "sensor_Function.h"
 
 void alignFrontWall(int LSensorVal, int RSensorVal, int duration){
 	int tempPwm = maxPwm;
 	maxPwm = alignPwm;
 	useIRSensors = 1;
 	useSpeedProfile = 0;
-	int timeAllotted = millis();
-	while (millis() - timeAllotted < duration) {
+	int startTime = millis();
+	while (millis() - startTime < duration) {
 		int curt = micros();
 		setLeftPwm(LSensorVal - LFSensor);
 		setRightPwm(RSensorVal - RFSensor);
@@ -21,6 +22,4 @@ void alignFrontWall(int LSensorVal, int RSensorVal, int duration){
 	setLeftEncCount(leftEncCount);
 	setRightEncCount(rightEncCount);
 	maxPwm = tempPwm;
-	useIRSensors = 0;
-	useSpeedProfile = 1;
 }

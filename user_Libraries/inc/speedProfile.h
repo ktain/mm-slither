@@ -11,10 +11,11 @@ int needToDecelerate(int32_t dist, int16_t curSpd, int16_t endSpd);
 void resetSpeedProfile(void);
 float dist_counts_to_mm(float counts);
 float dist_mm_to_counts(float mm);
-float counts_to_speed(int counts);
-float speed_to_counts (float speed);
+float counts_to_mm(int counts);
+float mm_to_counts (float speed);
 void getSensorError(void);
 float abs(float number);
+float getDecNeeded(float Vi, float Vf, float d);
 
 void moveForward(int cells);
 

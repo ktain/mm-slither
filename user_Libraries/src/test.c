@@ -107,10 +107,12 @@ void randomMovement(void) {
 			
 		// If has front wall or needs to turn, decelerate to 0 within half a cell distance
 		if (hasFrontWall || nextMove == TURNLEFT || nextMove == TURNRIGHT || nextMove == TURNBACK) {
-			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+			if(needToDecelerate(remainingDist, (int)mm_to_counts(curSpeedX), (int)mm_to_counts(stopSpeed)) < decX) {
 				targetSpeedX = searchSpeed;
-			else
+			}
+			else {
 				targetSpeedX = stopSpeed;
+				}
 		}
 		else 
 			targetSpeedX = searchSpeed;
@@ -227,65 +229,65 @@ int getNextDirection(void)
 
   if(!hasNorth(block[yPos][xPos]) && (distN == currDistance - 1))
   {
-		printf("TURN FRONT \n\r");
+		//printf("TURN FRONT \n\r");
     orientation = 'N';
     return MOVEN;
   }
   if(!hasEast(block[yPos][xPos]) && (distE == currDistance - 1))
   {
-		printf("TURN RIGHT \n\r");
+		//printf("TURN RIGHT \n\r");
     orientation = 'E';
     return MOVEE;
   }
   if(!hasSouth(block[yPos][xPos]) && (distS == currDistance - 1))
   {
-		printf("TURN BACK \n\r");
+		//printf("TURN BACK \n\r");
     orientation = 'S';
     return MOVES;
   }
   if(!hasWest(block[yPos][xPos]) && (distW == currDistance - 1))
   {
-		printf("TURN LEFT\n\r");
+		//printf("TURN LEFT\n\r");
     orientation = 'W';
     return MOVEW;
   }
-	printf("got here \n\r");
+	//printf("got here \n\r");
   return 0;
 }
 
 void speedRun(void) 
 {
-	int currDistance = distance[yPos][xPos];
-  int directions[100] = {0};
-  //assume initial direction is north
-  directions[0] = MOVEN;
+	resetSpeedProfile();
+	useIRSensors = 1;
+	useSpeedProfile = 1;
 
-  int index = 0;
-
+  int nextDir[100] = {0};
+	int length = 0;
+  
   xPos = 0;
   yPos = 0;
 	orientation = 'N';
 
- 	resetLeftEncCount();
-	resetRightEncCount();
-
 	// Close off untraced routes
 	closeUntracedCells();
   updateDistance();
+  visualizeGrid();
 
+	/* 
+	// Simulation 1
+	int index = 0;
+	int currDistance = 0;
+	int currBlock = 0;
   int distN = MAX_DIST;
   int distE = MAX_DIST;
   int distS = MAX_DIST;
   int distW = MAX_DIST;
-
-  
-  visualizeGrid();
 	
-  int length = 0;
- 
   while(!atCenter())
   {
 		currDistance = distance[yPos][xPos];
+		currBlock = block[yPos][xPos];
+		
 		if(yPos < SIZE - 1)
 			distN = distance[yPos+1][xPos];
 		if(xPos < SIZE - 1)
@@ -295,85 +297,97 @@ void speedRun(void)
 		if(yPos > 0)
 			distW = distance[yPos][xPos-1];
  
-		printf("loop\n\r");
-    if(!hasNorth(block[yPos][xPos]) && orientation == 'N' && (distN == currDistance - 1))
+    if(!hasNorth(currBlock) && orientation == 'N' && (distN == currDistance - 1))
     {
-			printf("Moving north\n\r");
       length++;
       yPos++;
     }
-    else if(!hasEast(block[yPos][xPos]) && orientation == 'E' && (distE == currDistance -1))
+    else if(!hasEast(currBlock) && orientation == 'E' && (distE == currDistance - 1))
     {
-			printf("Moving east\n\r");
       length++;
       xPos++;
     }
-    else if(!hasSouth(block[yPos][xPos]) && orientation == 'S' && (distS == currDistance -1))
+    else if(!hasSouth(currBlock) && orientation == 'S' && (distS == currDistance - 1))
     {
-			printf("Moving south\n\r");
       length++;
       yPos--;
     }
-    else if(!hasWest(block[yPos][xPos]) && orientation == 'W' && (distW == currDistance -1 ))
+    else if(!hasWest(currBlock) && orientation == 'W' && (distW == currDistance - 1))
     {
-			printf("Moving west\n\r");
       length++;
       xPos--;
     }
     else
     {
-			printf("else storing distance\n\r");
       distances[index] = length;
       length = 0;
-      index++;
-      directions[index] = getNextDirection();
+      nextDir[index] = getNextDirection();
+		  index++;
     }
   }
 	distances[index] = length;
-	for(int i = 0; i < 7; i++)
-		printf("Index: %d Dist: %d Direction: %d \n\r", i, distances[i], directions[i]);
-	printf("finished\n\r");
-	printf("Index %d\n\r",index);
+	*/
 	
-  index = 0;
-	int flag = 0;
-  while(distances[index] != 0 && !flag)
-  {
-		if(distances[index] == 0)
-			flag = 1;
-		printf("index : %d \n\r", index);
-		printf("distance to move: %d \n\r", distances[index]);
-		printf("direction to move in: %d \n\r", directions[index]);
-    if (directions[index] == MOVEN) {
-			resetSpeedProfile();
-			isSpeedRunning = 1;
-			useSpeedProfile = 1;
+	// Simulate path
+	for (int i = 0; !atCenter(); i++) {
+		if (orientation == 'N') {
+			while (!hasNorth(block[yPos][xPos]) && (distance[yPos + 1][xPos] == distance[yPos][xPos] - 1)) {
+				length++;
+				yPos++;
+			}
+		}
+		else if (orientation == 'E') {
+			while (!hasEast(block[yPos][xPos]) && (distance[yPos][xPos + 1] == distance[yPos][xPos] - 1)) {
+				length++;
+				xPos++;
+			}
+		}
+		else if (orientation == 'S') {
+			while (!hasSouth(block[yPos][xPos]) && (distance[yPos - 1][xPos] == distance[yPos][xPos] - 1)) {
+				length++;
+				yPos--;
+			}
+		}
+		else if (orientation == 'W') {
+			while (!hasWest(block[yPos][xPos]) && (distance[yPos][xPos - 1] == distance[yPos][xPos] - 1)) {
+				length++;
+				xPos--;
+			}
+		}
+		distances[i] = length;
+		nextDir[i] = getNextDirection();
+		length = 0;
+	}
+	
+	/* Print values
+	for (int i = 0; distances[i]; i++)
+		printf("distances[%d] = %d | nextDir[%d] = %d\n\r", i, distances[i], i, nextDir[i]);
+	*/
+	
+	// Run path
+  for (int i = 0; distances[i] != 0; i++) {
+		moveForward(distances[i]);
+		
+    if (nextDir[i] == MOVEN) {
+			printf("MoveN");
       moveN();
     }
-    else if (directions[index] == MOVEE) {
-			resetSpeedProfile();
-			isSpeedRunning = 1;
-			useSpeedProfile = 1;
+    else if (nextDir[i] == MOVEE) {
+			printf("MoveE");
       moveE();
     }
-    else if (directions[index] == MOVES) {
-			resetSpeedProfile();
-			isSpeedRunning = 1;
-			useSpeedProfile = 1;
+    else if (nextDir[i] == MOVES) {
+			printf("MoveS");
       moveS();
     }
-    else if (directions[index] == MOVEW) {
-			resetSpeedProfile();
-			isSpeedRunning = 1;
-			useSpeedProfile = 1;
+    else if (nextDir[i] == MOVEW) {
+			printf("MoveW");
       moveW();
     }
-		printf("move forward\n\r");
-    moveForward(distances[index]);
-    index++;
   }
-	printf("done\n\r");
-
+	targetSpeedX = 0;
+	//useSpeedProfile = 1;
+	useIRSensors = 0;
 }
 
 void speedRunOld(void) {
@@ -519,10 +533,11 @@ void speedRunOld(void) {
 			else {
 				if (DEBUG) {
 					printf("Stuck... Can't find center.\n\r");
-					turnMotorOff;
-					useSpeedProfile = 0;
-					while(1);
 				}
+				turnMotorOff;
+				useSpeedProfile = 0;
+				visualizeGrid();
+				while(1);
 			}
 		}
 		
@@ -541,7 +556,7 @@ void speedRunOld(void) {
 		
 		// If needs to turn, decelerate to 0 within half a cell distance
 		if (willTurn()) {
-			if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+			if(needToDecelerate(remainingDist, (int)mm_to_counts(curSpeedX), (int)mm_to_counts(stopSpeed)) < decX)
 				targetSpeedX = maxSpeed;
 			else
 				targetSpeedX = stopSpeed;
@@ -582,7 +597,7 @@ void speedRunOld(void) {
 	useIRSensors = 0;
 	while(remainingDist > 0) {
 		remainingDist = cellCount*cellDistance - encCount;
-		if(needToDecelerate(remainingDist, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(stopSpeed)) < decX)
+		if(needToDecelerate(remainingDist, curSpeedX, stopSpeed) < decX)
 			targetSpeedX = searchSpeed;
 		else
 			targetSpeedX = stopSpeed;

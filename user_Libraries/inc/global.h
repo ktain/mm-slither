@@ -19,6 +19,7 @@ extern int gearRatio;
 extern float wheelCircumference;
 extern float wheelBase;
 extern int cellDistance;
+extern float countspermm;
 
 // Speed settings
 extern int leftBaseSpeed;

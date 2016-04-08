@@ -10,6 +10,7 @@
 #include "pwm.h"
 #include "config.h"
 #include "maze.h"
+#include <stdio.h>
 
 float curSpeedX = 0;
 float curSpeedW = 0;
@@ -33,8 +34,8 @@ float kpW1 = 1;						//used for T1 and T3 in curve turn, default 1
 float kdW1 = 26;
 float kpW2 = 1;						//used for T2 in curve turn
 float kdW2 = 36;
-float accX = 60;					// acc/dec in cm/s/s
-float decX = 200; 				// default 600 = 6m/s/s  
+float accX = 30;					// acc/dec in mm/ms/ms
+float decX = 30; 				 
 float accW = 1; 					// cm/s^2
 float decW = 1;	
 
@@ -51,7 +52,7 @@ int32_t distanceLeft = 0;
 int32_t encCount = 0;
 int32_t oldEncCount = 0;
 int sensorError = 0;
-int sensorScale = 20;
+int sensorScale = 50;
 
 int gyroFeedbackRatio = 5700;
 
@@ -90,13 +91,13 @@ void getEncoderStatus(void)
 void updateCurrentSpeed(void) {
 	if(curSpeedX < targetSpeedX)
 	{
-		curSpeedX += (float)(speed_to_counts(accX*2)/100);
+		curSpeedX += ((accX*2)/100);
 		if(curSpeedX > targetSpeedX)
 			curSpeedX = targetSpeedX;
 	}
 	else if(curSpeedX > targetSpeedX)
 	{
-		curSpeedX -= (float)(speed_to_counts(decX*2)/100);
+		curSpeedX -= ((decX*2)/100);
 		if(curSpeedX < targetSpeedX)
 			curSpeedX = targetSpeedX;
 	}
@@ -176,10 +177,12 @@ int needToDecelerate(int32_t dist, int16_t curSpd, int16_t endSpd)
 	if (dist == 0) 
 		dist = 1;  // prevent dividing by 0
 	
-	int estimatedDecX = ((curSpd*curSpd - endSpd*endSpd)*100/dist_counts_to_mm(dist)/4);
+	int estimatedDecX = ((curSpd*curSpd - endSpd*endSpd)*100/counts_to_mm(dist)/4);
 	
 	return (estimatedDecX < 0)? -estimatedDecX : estimatedDecX;	// cm/s/s
 }
+
+
 
 
 void resetSpeedProfile(void)
@@ -187,12 +190,8 @@ void resetSpeedProfile(void)
 	//resetEverything;
 	
 	//disable sensor data collecting functions running in 1ms interrupt
- 	useIRSensors = false;
- 	useGyro = false;
-	
-	//no PID calculating, no motor lock
-	usePID = false;	
-
+ 	useIRSensors = 0;
+	useSpeedProfile = 0;
 	turnMotorOff;
 	
 	pidInputX = 0;
@@ -206,6 +205,7 @@ void resetSpeedProfile(void)
 	oldPosErrorX = 0;
 	oldPosErrorW = 0;
   leftEncOld = 0;
+
 	rightEncOld = 0;	
 	leftEncCount = 0;
 	rightEncCount = 0;
@@ -213,32 +213,29 @@ void resetSpeedProfile(void)
 	oldEncCount = 0;
 	leftBaseSpeed = 0;
 	rightBaseSpeed = 0;
+	distanceLeft = 0;
 
 	resetLeftEncCount();
 	resetRightEncCount();
 }
 
+float getDecNeeded (float d, float Vf, float Vi) {
+	if (d <= 0) {
+		d = 1;
+	}
+	
+	return abs( (Vf*Vf - Vi*Vi)/d/8 );
+}	
 
-// convert distance in counts to mm
-float dist_counts_to_mm(float counts) {
-	return (counts*wheelCircumference/encResolution/gearRatio);
+// convert counts/ms to speed in mm/ms
+float counts_to_mm (int counts) {
+	return (counts/countspermm);
 }
 
 
-// convert distance in mm to counts 
-float dist_mm_to_counts(float mm) {
-	return (mm*encResolution*gearRatio/wheelCircumference);
-}
-
-// convert counts/ms to speed in cm/s
-float counts_to_speed (int counts) {
-	return 0;
-}
-
-
-// convert speed in cm/s to counts/ms,
-float speed_to_counts (float speed) {
-	return (speed*encResolution*gearRatio/wheelCircumference/100);	// truncate from float to int
+// convert speed in mm/s to counts/ms,
+float mm_to_counts (float speed) {
+	return (speed*countspermm);	// truncate from float to int
 }
 
 
@@ -253,35 +250,31 @@ float abs (float number) {
  */
 void moveForward(int cells) {
 	resetSpeedProfile();
-	
 	useIRSensors = 1;
-	useGyro = 0;
-	usePID = 1;
 	useSpeedProfile = 1;
-	isWaiting = 0;
-	isSearching = 0;
-	isSpeedRunning = 1;
 	
-	distanceLeft = cells*cellDistances[cells];
-	
-	targetSpeedX = maxSpeed;
-	
-	while( (encCount - oldEncCount) < cells*cellDistances[cells] ) {
-		
-		//distanceLeft = cells*cellDistances[cells] - encCount;
-		if(distanceLeft < cellDistance/3)
+	int remainingDist = cells*cellDistance;
+
+	while( encCount < cells*cellDistance ) {
+		//printf("getDecNeeded = %f\n\r", getDecNeeded(counts_to_mm(remainingDist), curSpeedX, 0));
+		//printf("speed = %f\n\r", curSpeedX);
+		//printf("remainingDist in mm = %f\n\r", counts_to_mm(remainingDist));
+		//printf("remaining distance %d\n\r", remainingDist);
+		remainingDist = cells*cellDistance - encCount;
+		if (remainingDist < cellDistance/2) {
 			useIRSensors = 0;
-		if(needToDecelerate(distanceLeft, (int)speed_to_counts(curSpeedX), (int)speed_to_counts(moveSpeed)) < decX)
-			targetSpeedX = maxSpeed;
-		else
+		}
+		if (getDecNeeded(counts_to_mm(remainingDist), curSpeedX, 0) < decX) {
 			targetSpeedX = moveSpeed;
+		}
+		else {
+			targetSpeedX = 0;
+		}
 	}
 	targetSpeedX = 0;
-	turnMotorOff;
-	
-	useSpeedProfile = 0;
-	isSpeedRunning = 0;
+	//printf("remainingDist = %f\n\r", counts_to_mm(remainingDist));
 }
+
 
 
 void getSensorError(void)

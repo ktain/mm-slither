@@ -17,7 +17,7 @@
 #define HIDEEAST 1    // Hide east cell wall when printing
 
 /* Constants */
-#define SIZE 12       // size of maze
+#define SIZE 12      // size of maze
 #define MAX_DIST 252  // max distance for flood search
 
 /* Function declarations */

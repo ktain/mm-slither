@@ -41,3 +41,4 @@
 ..\obj\speedprofile.o: ..\user_Libraries\inc\pwm.h
 ..\obj\speedprofile.o: ..\user_Libraries\inc\config.h
 ..\obj\speedprofile.o: ..\user_Libraries\inc\maze.h
+..\obj\speedprofile.o: C:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h

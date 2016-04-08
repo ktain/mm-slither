@@ -46,8 +46,7 @@ void moveE() {
   }
   else if ( orientation == 'E' ) {
 
-  }
-  else if ( orientation == 'S' ) {
+  }  else if ( orientation == 'S' ) {
     pivotTurn(turnLeft90);
   }
 
