@@ -17,7 +17,7 @@
 #define HIDEEAST 1    // Hide east cell wall when printing
 
 /* Constants */
-#define SIZE 12      // size of maze
+#define SIZE 16      // size of maze
 #define MAX_DIST 252  // max distance for flood search
 
 /* Function declarations */
@@ -52,11 +52,10 @@ bool willTurn(void);
 
 
 /* Global variables */
-extern int block[SIZE][SIZE];  //  ... 0 0 0 0       0 0 0 0
+extern int block[SIZE][SIZE]; //  ... 0 0 0 0       0 0 0 0
                               //         DE TRACE   W S E N
                               // [row] [col]
                               // [ y ] [ x ]
-extern int input[SIZE][SIZE];  // to read in custom maze
 extern int distance[SIZE][SIZE];
 
 extern int xPos;   // 0-15

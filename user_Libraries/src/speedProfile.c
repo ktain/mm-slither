@@ -34,8 +34,8 @@ float kpW1 = 1;						//used for T1 and T3 in curve turn, default 1
 float kdW1 = 26;
 float kpW2 = 1;						//used for T2 in curve turn
 float kdW2 = 36;
-float accX = 30;					// acc/dec in mm/ms/ms
-float decX = 30; 				 
+float accX = 50;					// acc/dec in mm/ms/ms
+float decX = 50; 				 
 float accW = 1; 					// cm/s^2
 float decW = 1;	
 
@@ -256,10 +256,6 @@ void moveForward(int cells) {
 	int remainingDist = cells*cellDistance;
 
 	while( encCount < cells*cellDistance ) {
-		//printf("getDecNeeded = %f\n\r", getDecNeeded(counts_to_mm(remainingDist), curSpeedX, 0));
-		//printf("speed = %f\n\r", curSpeedX);
-		//printf("remainingDist in mm = %f\n\r", counts_to_mm(remainingDist));
-		//printf("remaining distance %d\n\r", remainingDist);
 		remainingDist = cells*cellDistance - encCount;
 		if (remainingDist < cellDistance/2) {
 			useIRSensors = 0;
@@ -272,7 +268,6 @@ void moveForward(int cells) {
 		}
 	}
 	targetSpeedX = 0;
-	//printf("remainingDist = %f\n\r", counts_to_mm(remainingDist));
 }
 
 

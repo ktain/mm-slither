@@ -773,11 +773,6 @@
               <FilePath>..\user_Libraries\src\speedProfile.c</FilePath>
             </File>
             <File>
-              <FileName>floodCenter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\user_Libraries\src\floodCenter.c</FilePath>
-            </File>
-            <File>
               <FileName>move.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\move.c</FilePath>
@@ -796,6 +791,11 @@
               <FileName>initializeGrid.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user_Libraries\src\initializeGrid.c</FilePath>
+            </File>
+            <File>
+              <FileName>floodSearch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user_Libraries\src\floodSearch.c</FilePath>
             </File>
           </Files>
         </Group>

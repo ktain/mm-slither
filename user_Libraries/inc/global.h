@@ -124,4 +124,7 @@ extern int turnRight180;
 
 extern int distances[100];
 
+// Interface
+extern int select;
+
 #endif

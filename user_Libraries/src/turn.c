@@ -27,5 +27,5 @@ void pivotTurn(float degrees) {
 	targetSpeedW = 0;
   curt = millis();
 	while(millis() - curt < turnDelay);
-	useSpeedProfile = 0;
+	useSpeedProfile = 1;
 }

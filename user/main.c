@@ -56,8 +56,8 @@ bool isSearching = 0;
 bool isSpeedRunning = 0;
 
 // Sensor Thresholds
-int frontWallThresholdL = 30;		// to detect presence of a wall
-int frontWallThresholdR = 30;
+int frontWallThresholdL = 20;		// to detect presence of a wall
+int frontWallThresholdR = 20;
 int leftWallThreshold = 350;
 int rightWallThreshold = 350;
 int LDMiddleValue = 650;
@@ -75,6 +75,9 @@ int	turnLeft180;
 int	turnRight180;
 
 int distances[100] = {0};
+
+// Interface
+int select = 0;
 
 void systick(void) {
 	
@@ -111,55 +114,23 @@ int main(void) {
 	shortBeep(200, 1000);	// ms, frequency
 	
 	isWaiting = 1;
-
-	// Speed profile 12v 512 1
-	/*
-	maxPwm = 900;
-	alignPwm = 300;
-	moveSpeed = 60*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 100*2;			// call speed_to_counts(maxSpeed)
-	turnSpeed = 40*2;		
-	searchSpeed = 60*2;
-	stopSpeed = 30*2;
 	
-	turnLeft90 = -70;
-	turnRight90 = 70;
-	turnLeft180 = -160;
-	turnRight180 = 160;
-	*/
 	
-	/*
-	// Speed/turn/sensor profile 12v 512 2
+	//Initial Speed Profile
 	maxPwm = 800;
 	alignPwm = 100;
-	moveSpeed = 200*2;			// speed is in cm/s, double of actual speed
-	maxSpeed = 500*2;			// call speed_to_counts(maxSpeed)
+	moveSpeed = 300*2;
+	maxSpeed = 800*2;			
 	turnSpeed = 40*2;
-	searchSpeed = 60*2;
-	stopSpeed = 20*2;
-	alignTime = 200;
-	turnDelay = 100;
-	
-	turnLeft90 = -70;
-	turnRight90 = 70;
-	turnLeft180 = -158;
-	turnRight180 = 158;
-	*/
-	
-	maxPwm = 800;
-	alignPwm = 100;
-	moveSpeed = 100*2;			// speed is in mm/ms, double of actual speed
-	maxSpeed = 200*2;			
-	turnSpeed = 40*2;
-	searchSpeed = 60*2;
+	searchSpeed = 70*2;
 	stopSpeed = 10*2;
-	alignTime = 200;
-	turnDelay = 500;
+	alignTime = 100;
+	turnDelay = 50;
 	
-	turnLeft90 = -71;
-	turnRight90 = 71;
-	turnLeft180 = -170;
-	turnRight180 = 170;
+	turnLeft90 = -76;
+	turnRight90 = 76;
+	turnLeft180 = -173;
+	turnRight180 = 173;
 
 	
 	// Sensor Thresholds
@@ -170,40 +141,39 @@ int main(void) {
 	RFvalue2 = 500;
 	
 	while(1) {		
-		if (isWaiting) {
-			int mode = getLeftEncCount()/2048 % 4;
-			if (mode < 0)
-				mode = -mode;
-			switch(mode) {
-				case 0:
-					LED1_ON;
-					LED2_OFF;
-					LED3_OFF;
-					LED4_OFF;
-					break;
-				case 1:
-					LED1_OFF;
-					LED2_ON;
-					LED3_OFF;
-					LED4_OFF;
-					break;
-				case 2:
-					LED1_OFF;
-					LED2_OFF;
-					LED3_ON;
-					LED4_OFF;
-					break;
-				case 3:
-					LED1_OFF;
-					LED2_OFF;
-					LED3_OFF;
-					LED4_ON;
-					break;
-				default:
-					;
-			}
-			delay_ms(10);
+		select = getLeftEncCount()/2048 % 4;
+		if (select < 0) {
+			select = -select;
 		}
+		switch(select) {
+			case 0:
+				LED1_ON;
+				LED2_OFF;
+				LED3_OFF;
+				LED4_OFF;
+				break;
+			case 1:
+				LED1_OFF;
+				LED2_ON;
+				LED3_OFF;
+				LED4_OFF;
+				break;
+			case 2:
+				LED1_OFF;
+				LED2_OFF;
+				LED3_ON;
+				LED4_OFF;
+				break;
+			case 3:
+				LED1_OFF;
+				LED2_OFF;
+				LED3_OFF;
+				LED4_ON;
+				break;
+			default:
+				;
+		}
+
 	}
 }
 
@@ -220,18 +190,70 @@ void button0_interrupt(void) {
 		delay_ms(2);
 	}
 	*/
-	speedRun();
 	
-	/*
-	moveForward(1);
-	delay_ms(1000);
-	resetSpeedProfile();
-	isSpeedRunning = 1;
-	useSpeedProfile = 1;
-	pivotTurn(turnRight90);
-	delay_ms(1000);
-	moveForward(1);
-	*/
+	switch (select) {
+		case 0:
+			alignPwm = 100;
+			moveSpeed = 100*2;
+			maxSpeed = 400*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 70*2;
+			stopSpeed = 0*2;
+			alignTime = 100;
+			turnDelay = 50;
+			sensorScale = 100;
+			accX = 60;
+			decX = 60;
+		
+			break;
+		case 1:
+			alignPwm = 100;
+			moveSpeed = 200*2;
+			maxSpeed = 400*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 70*2;
+			stopSpeed = 0*2;
+			alignTime = 100;
+			turnDelay = 50;
+			sensorScale = 100;
+			accX = 60;
+			decX = 60;
+		
+			break;
+		case 2:
+			alignPwm = 100;
+			moveSpeed = 300*2;
+			maxSpeed = 400*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 70*2;
+			stopSpeed = 0*2;
+			alignTime = 100;
+			turnDelay = 50;
+			sensorScale = 100;
+			accX = 60;
+			decX = 60;
+		
+			break;	
+		case 3:
+			alignPwm = 100;
+			moveSpeed = 400*2;
+			maxSpeed = 400*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 70*2;
+			stopSpeed = 0*2;
+			alignTime = 100;
+			turnDelay = 50;
+			sensorScale = 100;
+			accX = 60;
+			decX = 60;
+		
+			break;			
+		default:
+			;
+	}
+	
+	speedRun();
+	printf("Finished Button 1 ISR\n\r");
 }
 
 
@@ -239,25 +261,29 @@ void button0_interrupt(void) {
 void button1_interrupt(void) {
 	shortBeep(200, 500);
 	delay_ms(1000);	
-	printf("Button 1 pressed\n\r");
+	//printf("Button 1 pressed\n\r");
 
-	/*
-	while(1) {
-		readSensor();
-		ledTest();					// No delay
-		printInfo();				
-		delay_ms(2);
-	}
-	*/
-	
-	
-	moveForward(3);
-	moveW();
-	moveS();
-	moveForward(3);
-	moveE();
-	moveN();
+	initializeGrid();
+	visualizeGrid();
+	delay_ms(100);
 
+	alignPwm = 100;
+	moveSpeed = 400*2;
+	maxSpeed = 500*2;			
+	turnSpeed = 40*2;
+	searchSpeed = 50*2;
+	stopSpeed = 0*2;
+	alignTime = 0;
+	turnDelay = 100;
+	sensorScale = 50;
+	accX = 30;
+	decX = 30;
+	
+	LDMiddleValue = 650;
+	RDMiddleValue = 630;
+	
+	floodCenter();
+	//printf("Finished Button 1 ISR\n\r");
 }
 
 
@@ -268,40 +294,84 @@ void button2_interrupt(void) {
 	printf("Button 2 pressed\n\r");
 	
 	initializeGrid();
-	printGrid();
+	visualizeGrid();
 	delay_ms(100);
+	
+	switch (select) {
+		case 0:
+			alignPwm = 100;
+			moveSpeed = 400*2;
+			maxSpeed = 500*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 50*2;
+			stopSpeed = 0*2;
+			alignTime = 200;
+			turnDelay = 100;
+			sensorScale = 50;
+			accX = 30;
+			decX = 30;
+			break;
+		case 1:
+			alignPwm = 100;
+			moveSpeed = 400*2;
+			maxSpeed = 500*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 50*2;
+			stopSpeed = 0*2;
+			alignTime = 150;
+			turnDelay = 80;
+			sensorScale = 50;
+			accX = 40;
+			decX = 40;		
+			break;
+		case 2:
+			alignPwm = 100;
+			moveSpeed = 400*2;
+			maxSpeed = 500*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 60*2;
+			stopSpeed = 0*2;
+			alignTime = 100;
+			turnDelay = 50;
+			sensorScale = 50;
+			accX = 50;
+			decX = 50;
+			break;
+		case 3:
+			alignPwm = 100;
+			moveSpeed = 400*2;
+			maxSpeed = 500*2;			
+			turnSpeed = 40*2;
+			searchSpeed = 70*2;
+			stopSpeed = 0*2;
+			alignTime = 100;
+			turnDelay = 50;
+			sensorScale = 50;
+			accX = 60;
+			decX = 60;
+			break;
+		default:
+			;
+	}
+	
 	floodCenter();
+	printf("Finished Button 2 ISR\n\r");
 }
 
 
 
 void button3_interrupt(void) {
+	/*
 	shortBeep(200, 500);
 	delay_ms(1000);
 	printf("Button 3 pressed\n\r");
 
-	/*
-	int totalTime = millis();
-	times++;
-	moveForward(times);
-	totalTime = totalTime - millis();
-	printf("totalTime = %d", totalTime);
-	*/
 	
-	
-	while(1) {
-		readSensor();
-		ledTest();					// No delay
-		printInfo();				
-		delay_ms(2);
-	}
-	
-
-
-	/*
 	resetLeftEncCount();
 	resetRightEncCount();
 	randomMovement();
+	
+	printf("Finished Button 3 ISR\n\r");
 	*/
 }
 

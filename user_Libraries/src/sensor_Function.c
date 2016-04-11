@@ -50,7 +50,7 @@ void readSensor(void)
 		LFSensor = 0;
 	if(RFSensor < 0)
 		RFSensor = 0;
- 	elapseMicros(200,curt); // default 140
+ 	elapseMicros(250,curt); // default 140
 
 	// Read left and right diagonal sensors
 	LEM_D_ON;

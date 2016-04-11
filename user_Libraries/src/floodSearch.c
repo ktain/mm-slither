@@ -56,6 +56,16 @@ void floodCenter(void) {
 			useIRSensors = 1;
 			useSpeedProfile = 1;
 			
+			// Error check
+			if (distance[yPos][xPos] >= MAX_DIST) {
+				if (DEBUG) {
+					printf("Stuck... Can't find center.\n\r");
+				}
+				nextMove = STOP;
+				useSpeedProfile = 0;
+				turnMotorOff;
+			}
+			
 			// Update position
 			if (orientation == 'N') {
 				yPos += 1;
@@ -141,16 +151,17 @@ void floodCenter(void) {
 			else if (!hasWest(block[yPos][xPos]))
 				nextMove = MOVEW;
 			
-			if (DEBUG) printf("nextMove %d\n\r", nextMove);
-			
 			else {
 				if (DEBUG) {
 					printf("Stuck... Can't find center.\n\r");
-					turnMotorOff;
-					useSpeedProfile = 0;
-					while(1);
 				}
+				nextMove = STOP;
+				useSpeedProfile = 0;
+				turnMotorOff;
 			}
+			
+			if (DEBUG) printf("nextMove %d\n\r", nextMove);
+			
 		}
 		
 		// Reached half cell
@@ -164,7 +175,6 @@ void floodCenter(void) {
 					targetSpeedX = searchSpeed;
 				}
 				else {
-					//printf("slow down\n\r");
 					targetSpeedX = stopSpeed;
 				}
 			}
@@ -184,13 +194,11 @@ void floodCenter(void) {
 		}
 		
 		// Reached full cell
-		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2500) || (RFSensor > 2500)) {	// run once
+		if ((!fullCellFlag && (remainingDist <= 0))) {	// run once
 			if (DEBUG) printf("Reached full cell\n\r");
 			fullCellFlag = 1;
 			cellCount++;
 			shortBeep(200, 1000);
-			
-			targetSpeedX = 0;
 			
 			// Place trace
 			if (!hasTrace(block[yPos][xPos])) {
@@ -202,8 +210,6 @@ void floodCenter(void) {
 			if (hasFrontWall) {
 				alignFrontWall(LFvalue1, RFvalue1, alignTime);	// left, right, duration
 			}
-			
-			
 			
 			// Reached full cell, perform next move
 			if (nextMove == MOVEN) {
@@ -249,12 +255,10 @@ void floodCenter(void) {
 		traceCount++;
 	}
 	
-	targetSpeedX = 0;
-	turnMotorOff;
 	useSpeedProfile = 0;
+	turnMotorOff;
 			
   isolateDeadEnds();
-	
 	visualizeGrid();
 }
 

@@ -229,29 +229,24 @@ int getNextDirection(void)
 
   if(!hasNorth(block[yPos][xPos]) && (distN == currDistance - 1))
   {
-		//printf("TURN FRONT \n\r");
     orientation = 'N';
     return MOVEN;
   }
   if(!hasEast(block[yPos][xPos]) && (distE == currDistance - 1))
   {
-		//printf("TURN RIGHT \n\r");
     orientation = 'E';
     return MOVEE;
   }
   if(!hasSouth(block[yPos][xPos]) && (distS == currDistance - 1))
   {
-		//printf("TURN BACK \n\r");
     orientation = 'S';
     return MOVES;
   }
   if(!hasWest(block[yPos][xPos]) && (distW == currDistance - 1))
   {
-		//printf("TURN LEFT\n\r");
     orientation = 'W';
     return MOVEW;
   }
-	//printf("got here \n\r");
   return 0;
 }
 
@@ -272,61 +267,6 @@ void speedRun(void)
 	closeUntracedCells();
   updateDistance();
   visualizeGrid();
-
-	/* 
-	// Simulation 1
-	int index = 0;
-	int currDistance = 0;
-	int currBlock = 0;
-  int distN = MAX_DIST;
-  int distE = MAX_DIST;
-  int distS = MAX_DIST;
-  int distW = MAX_DIST;
-	
-  while(!atCenter())
-  {
-		currDistance = distance[yPos][xPos];
-		currBlock = block[yPos][xPos];
-		
-		if(yPos < SIZE - 1)
-			distN = distance[yPos+1][xPos];
-		if(xPos < SIZE - 1)
-			distE = distance[yPos][xPos+1];
-		if(xPos > 0)
-			distS = distance[yPos-1][xPos];
-		if(yPos > 0)
-			distW = distance[yPos][xPos-1];
- 
-    if(!hasNorth(currBlock) && orientation == 'N' && (distN == currDistance - 1))
-    {
-      length++;
-      yPos++;
-    }
-    else if(!hasEast(currBlock) && orientation == 'E' && (distE == currDistance - 1))
-    {
-      length++;
-      xPos++;
-    }
-    else if(!hasSouth(currBlock) && orientation == 'S' && (distS == currDistance - 1))
-    {
-      length++;
-      yPos--;
-    }
-    else if(!hasWest(currBlock) && orientation == 'W' && (distW == currDistance - 1))
-    {
-      length++;
-      xPos--;
-    }
-    else
-    {
-      distances[index] = length;
-      length = 0;
-      nextDir[index] = getNextDirection();
-		  index++;
-    }
-  }
-	distances[index] = length;
-	*/
 	
 	// Simulate path
 	for (int i = 0; !atCenter(); i++) {
@@ -364,251 +304,31 @@ void speedRun(void)
 		printf("distances[%d] = %d | nextDir[%d] = %d\n\r", i, distances[i], i, nextDir[i]);
 	*/
 	
+	orientation = 'N';
+	
 	// Run path
   for (int i = 0; distances[i] != 0; i++) {
 		moveForward(distances[i]);
 		
     if (nextDir[i] == MOVEN) {
-			printf("MoveN");
       moveN();
     }
     else if (nextDir[i] == MOVEE) {
-			printf("MoveE");
       moveE();
     }
     else if (nextDir[i] == MOVES) {
-			printf("MoveS");
       moveS();
     }
     else if (nextDir[i] == MOVEW) {
-			printf("MoveW");
       moveW();
     }
   }
-	targetSpeedX = 0;
-	//useSpeedProfile = 1;
-	useIRSensors = 0;
-}
-
-void speedRunOld(void) {
-	resetSpeedProfile();
 	
-	useIRSensors = 1;
-	useGyro = 0;
-	usePID = 1;
-	useSpeedProfile = 1;
-	isWaiting = 0;
-	isSearching = 0;
-	isSpeedRunning = 1;
-	
-	int cellCount = 1;						// number of explored cells
-	int remainingDist = 0;				// positional distance
-	bool beginCellFlag = 0;
-	bool quarterCellFlag = 0;
-	bool halfCellFlag = 0;
-	bool threeQuarterCellFlag = 0;
-	bool fullCellFlag = 0;
-
-	int distN = 0;   // distances around current position
-  int distE = 0;
-  int distS = 0;
-  int distW = 0;
-	
-	// Close off untraced routes
-	closeUntracedCells();
-	
-	// Update distanced
-	updateDistance();
-	
-	visualizeGrid();
-	
-	// Starting cell
-	xPos = 0;
-	yPos = 0;
-	orientation = 'N';
-	
-	resetLeftEncCount();
-	resetRightEncCount();
-
-  //TODO BEFORE SETTING SPEED, CALCULATE ACTUAL MOVES TO MAKE 
-  
-  /*
-  while(!atCenter())
-  {
-    int currCellCount = cellCount;
-
-    while(!hasNorth(block[yPos][xPos]))
-    {
-
-    }
-
-  }
-  */
-
-  //TODO AFTERWARDS, WE HAVE A QUEUE WITH THE MOVES TO DO 
-  //(OR JUST RUN THE DISTANCES)
-  //SET SPEED
-	targetSpeedX = maxSpeed;
-	
-	while(!atCenter()) {
-		remainingDist = cellCount*cellDistance - encCount;
-		
-		// Beginning of cell
-		if (!beginCellFlag && (remainingDist <= cellDistance))	{	// run once
-			beginCellFlag = 1;
-			
-			useIRSensors = 1;
-			useGyro = 0;
-			useSpeedProfile = 1;
-			
-			// Update position
-			if (orientation == 'N') {
-				yPos += 1;
-			}
-			if (orientation == 'E') {
-				xPos += 1;
-			}
-			if (orientation == 'S') {
-				yPos -= 1;
-			}
-			if (orientation == 'W') {
-				xPos -= 1;
-			}
-		}
-		
-		// Reached quarter cell
-		if (!quarterCellFlag && (remainingDist <= cellDistance*3/4))	{	// run once
-			quarterCellFlag = 1;
-		}
-		
-		if (quarterCellFlag && !threeQuarterCellFlag)	{ // middle half
-			
-		}
-		
-		
-		// Reached half cell
-		if (!halfCellFlag && (remainingDist <= cellDistance/2)) {		// Run once
-			halfCellFlag = 1;
-			
-			// Get distances around current block
-			distN = (hasNorth(block[yPos][xPos]))? 500 : distance[yPos + 1][xPos];
-			distE = (hasEast(block[yPos][xPos]))? 500 : distance[yPos][xPos + 1];
-			distS = (hasSouth(block[yPos][xPos]))? 500 : distance[yPos - 1][xPos];
-			distW = (hasWest(block[yPos][xPos]))? 500 : distance[yPos][xPos - 1];
-			
-			// Decide next movement
-			if (DEBUG) printf("Deciding next movement\n\r");
-			// 1. Pick the shortest route
-			if ( (distN < distE) && (distN < distS) && (distN < distW) )
-				nextMove = MOVEN;
-			else if ( (distE < distN) && (distE < distS) && (distE < distW) )
-				nextMove = MOVEE;
-			else if ( (distS < distE) && (distS < distN) && (distS < distW) )
-				nextMove = MOVES;
-			else if ( (distW < distE) && (distW < distS) && (distW < distN) )
-				nextMove = MOVEW;
-			 
-			// 2. If multiple equally short routes, go straight if possible
-			else if ( orientation == 'N' && !hasNorth(block[yPos][xPos]) )
-				nextMove = MOVEN;
-			else if ( orientation == 'E' && !hasEast(block[yPos][xPos]) )
-				nextMove = MOVEE;
-			else if ( orientation == 'S' && !hasSouth(block[yPos][xPos]) )
-				nextMove = MOVES;
-			else if ( orientation == 'W' && !hasWest(block[yPos][xPos]) )
-				nextMove = MOVEW;
-			 
-			// 3. Otherwise prioritize N > E > S > W
-			else if (!hasNorth(block[yPos][xPos]))
-				nextMove = MOVEN;
-			else if (!hasEast(block[yPos][xPos]))
-				nextMove = MOVEE;
-			else if (!hasSouth(block[yPos][xPos]))
-				nextMove = MOVES;
-			else if (!hasWest(block[yPos][xPos]))
-				nextMove = MOVEW;
-			
-			if (DEBUG) printf("nextMove %d\n\r", nextMove);
-			
-			else {
-				if (DEBUG) {
-					printf("Stuck... Can't find center.\n\r");
-				}
-				turnMotorOff;
-				useSpeedProfile = 0;
-				visualizeGrid();
-				while(1);
-			}
-		}
-		
-		// Reached three quarter cell
-		if (!threeQuarterCellFlag && (remainingDist <= cellDistance*1/4)) {	// run once
-			threeQuarterCellFlag = 1;
-			// Check for front wall to turn off for the remaining distance
-			if (hasFrontWallInMem())
-				useIRSensors = 0;
-		}
-		
-		
-		if (threeQuarterCellFlag) {
-			
-		}
-		
-		// If needs to turn, decelerate to 0 within half a cell distance
-		if (willTurn()) {
-			if(needToDecelerate(remainingDist, (int)mm_to_counts(curSpeedX), (int)mm_to_counts(stopSpeed)) < decX)
-				targetSpeedX = maxSpeed;
-			else
-				targetSpeedX = stopSpeed;
-		}
-		else 
-			targetSpeedX = maxSpeed;
-		
-		// Reached full cell
-		if ((!fullCellFlag && (remainingDist <= 0)) || (LFSensor > 2500) || (RFSensor > 2500)) {	// run once
-			if (DEBUG) printf("Reached full cell\n\r");
-			fullCellFlag = 1;
-			cellCount++;
-			shortBeep(200, 1000);
-			
-			// Reached full cell, perform next move
-			if (nextMove == MOVEN) {
-				moveN();
-			}
-			else if (nextMove == MOVEE) {
-				moveE();
-			}
-			else if (nextMove == MOVES) {
-				moveS();
-			}
-			else if (nextMove == MOVEW) {
-				moveW();
-			}
-			
-			beginCellFlag = 0;
-			quarterCellFlag = 0;
-			halfCellFlag = 0;
-			threeQuarterCellFlag = 0;
-			fullCellFlag = 0;
-		}
-	}
-	
-	// Finish moving across last cell
-	useIRSensors = 0;
-	while(remainingDist > 0) {
-		remainingDist = cellCount*cellDistance - encCount;
-		if(needToDecelerate(remainingDist, curSpeedX, stopSpeed) < decX)
-			targetSpeedX = searchSpeed;
-		else
-			targetSpeedX = stopSpeed;
-	}
-	
-	targetSpeedX = 0;
-	turnMotorOff;
 	useSpeedProfile = 0;
-	
-	if (DEBUG) visualizeGrid();
+	turnMotorOff;
 }
+
+
 
 void closeUntracedCells(void) {
 	int j, k;
